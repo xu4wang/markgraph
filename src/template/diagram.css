@@ -1,0 +1,77 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0 30px;
+  padding-bottom: 125px;
+  overflow-x: hidden;
+}
+
+.header {
+  padding: 1px 0 30px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+
+#content {
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+#permalink {
+  float: right;
+}
+
+#src {
+  width: calc(49% - 4px);
+  height: 100%;
+}
+
+#dst {
+  width: 49%;
+  height: 100%;
+}
+
+#resize {
+  width: 4px;
+  height: 100vh;
+  cursor: ew-resize;
+}
+
+#resize:hover {
+  background-color: blue;
+}
+
+#src .CodeMirror {
+  background-color: #fffffb;
+  border: 1px solid #888;
+  border-radius: 3px;
+  box-shadow: 0 0 3px #ccc inset;
+}
+
+#dst .CodeMirror {
+  background-color: #F8F8F8;
+  border: 1px solid #eee;
+  border-radius: 3px;
+}
+
+/*.CodeMirror-scroll {
+  height: 500px;
+  line-height: 1.2;
+}*/
+
+.CodeMirror {
+  height: 100%;
+  font-size: 13px;
+}
+
+.CodeMirror .cm-comment {
+  color: #baa;
+}
+
+
