@@ -5,14 +5,14 @@
 var jsyaml     = require('js-yaml');
 var codemirror = require('codemirror');
 var base64     = require('./base64');
-var inspect    = require('util').inspect;
+//var inspect    = require('util').inspect;
 
 
 require('codemirror/mode/yaml/yaml.js');
 require('codemirror/mode/javascript/javascript.js');
 
 
-var source, result, permalink, default_text;
+var source, result = {}, permalink, default_text;
 
 var SexyYamlType = new jsyaml.Type('!sexy', {
   kind: 'sequence', // See node kinds in YAML spec: http://www.yaml.org/spec/1.2/spec.html#kind//
@@ -28,15 +28,17 @@ function parse() {
 
   str = source.getValue();
   permalink.href = '#yaml=' + base64.encode(str);
+  result['error'] = false;
+  result['json'] = {};
 
   try {
     obj = jsyaml.load(str, { schema: SEXY_SCHEMA });
 
-    result.setOption('mode', 'javascript');
-    result.setValue(inspect(obj, false, 10));
+    result.error = false;
+    result.json = obj;
   } catch (err) {
-    result.setOption('mode', 'text/plain');
-    result.setValue(err.message || String(err));
+    result.error = true;
+    result.json = err.message || String(err);
   }
 }
 
@@ -98,10 +100,22 @@ window.onload = function () {
     timer = setTimeout(parse, 500);
   });
 
-  result = codemirror.fromTextArea(document.getElementById('result'), {
-    readOnly: true
-  });
-
   // initial source
   updateSource();
+  window.diagram_attrs = result;  //store the JSON configuration object in window.diagram_attrs.
+  //it will be updated automatically. by the timer.
+
+  jsPlumbBrowserUI.ready(function () {
+    window.j = jsPlumbBrowserUI.newInstance({
+      dragOptions: { cursor: 'pointer', zIndex: 2000 },
+      paintStyle: { stroke: '#666' },
+      endpointHoverStyle: { fill: 'orange' },
+      hoverPaintStyle: { stroke: 'orange' },
+      endpointStyle: { width: 20, height: 16, stroke: '#666' },
+      endpoint: 'Rectangle',
+      anchors: [ 'TopCenter', 'TopCenter' ],
+      container: canvas,
+      dropOptions:{ activeClass:'dragActive', hoverClass:'dropHover' }
+    });
+  });
 };

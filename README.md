@@ -1,21 +1,41 @@
 # diagram
 Generating diagram from yaml.
 
-# Usage 
+# Quick Start 
 
 ```yaml
-settings:
+diagram:
     cols: 3   # 3 grids in X [1,2,3]
     rows: 3   # 3 grids in Y [1,2,3]
+    width: 640  # 640 pixels width
+    height: 480  # 480 pixels heigth
     padding: 0.2   # 20% blank around the nodes
-    tittle: The Tittle of the Diagram
-    background-color: white  # https://html-color-codes.info/color-names/
+    title: The Title of the Diagram
+    diagram style:
+        background-color: white  # https://html-color-codes.info/color-names/
+    title style:
+        key: val
+    node style:
+        key: val
+    image style:
+        key: val
+    text style:
+        key: val
 nodes:
     n1:
         title: Node 1
+        title style:
+                key1: val1
+                key2: val2
         image: https://www.baidu.com/baidu.png
+        image style:
+                key1: val1
+                key2: val2
         row: 1   # put it in (1,1) 
         col: 1
+        node style:
+            key1: val1
+            key2: val2
     n2:
         title: Node 2
         image: https://www.baidu.com/baidu.png   
@@ -45,3 +65,11 @@ edges:
         type: arrow
         sn: 3
 ```
+
+# Configurable Attributes 
+
+## node
+
+### title 
+
+### image

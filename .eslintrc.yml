@@ -1,14 +1,16 @@
 env:
   node:     true
   browser:  true
-  es6:      false
+  es6:      true
 
 globals:
   Uint8Array: false
+  jsPlumbBrowserUI: readonly
+  canvas: readonly
 
 ignorePatterns:
-  - demo/
   - dist/
+  - jsplumb/
   - node_modules
   - rollup.config.js
 
