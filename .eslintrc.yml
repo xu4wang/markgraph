@@ -11,6 +11,7 @@ globals:
 ignorePatterns:
   - dist/
   - jsplumb/
+  - test/
   - node_modules
   - rollup.config.js
 

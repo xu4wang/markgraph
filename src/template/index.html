@@ -27,65 +27,43 @@
         <h4 class="subheader"><a href="#" id="permalink">permalink</a> Edit source here:</h4>
         <textarea id="source">---
 diagram:
-    cols: 3   # 3 grids in X [1,2,3]
-    rows: 3   # 3 grids in Y [1,2,3]
-    width: 640  # 640 pixels width
-    height: 480  # 480 pixels heigth
-    padding: 0.2   # 20% blank around the nodes
-    title: The Title of the Diagram
-    diagram style:
-        background-color: white  # https://html-color-codes.info/color-names/
-    title style:
-        key: val
-    node style:
-        key: val
-    image style:
-        key: val
-    text style:
-        key: val
+    grid_width: 300  # 640 pixels width
+    grid_height: 300  # 480 pixels heigth
+    grid_padding: 0.3   # 20% blank around the nodes
 nodes:
     n1:
-        title: Node 1
-        title style:
-                key1: val1
-                key2: val2
-        image: https://www.baidu.com/baidu.png
-        image style:
-                key1: val1
-                key2: val2
+        title: World Bank
+        img: https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fa4365c3b20413f92c9763f2fcbddca231412c47c20d01-nFvQZ0_fw658&refer=http%3A%2F%2Fhbimg.b0.upaiyun.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1656583888&t=7b63e4ff923c0a717edc60a07c14f1d4
         row: 1   # put it in (1,1) 
         col: 1
-        node style:
-            key1: val1
-            key2: val2
+        border: 2px dashed green
     n2:
-        title: Node 2
-        image: https://www.baidu.com/baidu.png   
-        row: 1  # put it in (1,3)
-        col: 3  
+        title: EDC Machine
+        img: https://img2.baidu.com/it/u=4189416670,2802646474&fm=253&fmt=auto&app=138&f=JPEG?w=614&h=414
+        row: 1   # put it in (1,1) 
+        col: 2
     n3:
-        title: Node 3
-        image: https://www.baidu.com/baidu.png
-        row: 3  # put it in (3,3)
+        title: Wine Dealer
+        img: https://img1.baidu.com/it/u=310438553,3465145814&fm=253&fmt=auto&app=120&f=JPEG?w=341&h=192
+        row: 2   # put it in (1,1) 
         col: 3
+        border: false
 edges:
-    -   from: n1
-        to: n2
-        type: arrow
-        color: red
-        notes: | 
-            a description for this message
-            with line break.
-        sn: 1  # sequence number of the edge
-    -   from: n2
-        to: n3
-        type: arrow
-        notes: single line note
-        sn: 2
-    -   from: n3
-        to: n1
-        type: arrow
-        sn: 3
+  - source: n1
+    target: n2
+    anchor: AutoDefault
+    endpoints:
+        - Dot
+        - Blank
+    overlays:
+        - type: Arrow
+          options:
+            location: 1
+        - type: Label
+          options:
+            label: foo
+            location: 50
+            id: mylabel
 </textarea>
       </div>
       <div id="resize">
@@ -93,12 +71,7 @@ edges:
       <div class="jtk-demo-main" id="dst">
         <!-- demo -->
         <div class="jtk-demo-canvas canvas-wide drag-drop-demo jtk-surface jtk-surface-nopan" id="canvas">
-            <div class="window" id="dragDropWindow1">one<br/>
-                <img src="https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png" alt="Smiley face" />
-            </div>
-            <div class="window" id="dragDropWindow2">two<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow2">toggle connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow2">disable dragging</a><br/><a href="#" class="cmdLink detach" rel="dragDropWindow2">detach all</a></div>
-            <div class="window" id="dragDropWindow3">three<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow3">toggle connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow3">disable dragging</a><br/><a href="#" class="cmdLink detach" rel="dragDropWindow3">detach all</a></div>
-            <div class="window" id="dragDropWindow4">four<br/><br/><a href="#" class="cmdLink hide" rel="dragDropWindow4">toggle connections</a><br/><a href="#" class="cmdLink drag" rel="dragDropWindow4">disable dragging</a><br/><a href="#" class="cmdLink detach" rel="dragDropWindow4">detach all</a></div>
+
         </div>
       </div>
     </div>

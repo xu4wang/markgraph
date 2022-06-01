@@ -7,19 +7,19 @@ Generating diagram from yaml.
 diagram:
     cols: 3   # 3 grids in X [1,2,3]
     rows: 3   # 3 grids in Y [1,2,3]
-    width: 640  # 640 pixels width
-    height: 480  # 480 pixels heigth
+    grid_width: 200  # 200 pixels width
+    grid_height: 100  # 100 pixels heigth
     padding: 0.2   # 20% blank around the nodes
     title: The Title of the Diagram
-    diagram style:
+    diagram_style:
         background-color: white  # https://html-color-codes.info/color-names/
-    title style:
+    title_style:
         key: val
-    node style:
+    node_style:
         key: val
-    image style:
+    image_style:
         key: val
-    text style:
+    text_style:
         key: val
 nodes:
     n1:

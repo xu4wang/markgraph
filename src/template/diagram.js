@@ -5,6 +5,9 @@
 var jsyaml     = require('js-yaml');
 var codemirror = require('codemirror');
 var base64     = require('./base64');
+var nodes      = require('./node.js');
+var edges      = require('./edges.js');
+
 //var inspect    = require('util').inspect;
 
 
@@ -23,6 +26,30 @@ var SexyYamlType = new jsyaml.Type('!sexy', {
 
 var SEXY_SCHEMA = jsyaml.DEFAULT_SCHEMA.extend([ SexyYamlType ]);
 
+
+function clear_canvas() {
+  window.j.reset();  //remove all connections, endpoints.
+  //remove all DOMs created by nodes.
+  nodes.clear_nodes();
+  edges.clear_edges();
+}
+
+function draw_nodes(obj) {
+  nodes.add_nodes(obj);
+}
+
+//eslint-disable-next-line
+function draw_edges(obj) {
+  edges.add_edges(obj);
+}
+
+function draw(obj) {
+  //update canvas
+  clear_canvas();
+  draw_nodes(obj);
+  draw_edges(obj);
+}
+
 function parse() {
   var str, obj;
 
@@ -33,7 +60,7 @@ function parse() {
 
   try {
     obj = jsyaml.load(str, { schema: SEXY_SCHEMA });
-
+    draw(obj);
     result.error = false;
     result.json = obj;
   } catch (err) {
@@ -104,6 +131,8 @@ window.onload = function () {
   updateSource();
   window.diagram_attrs = result;  //store the JSON configuration object in window.diagram_attrs.
   //it will be updated automatically. by the timer.
+  var canvas = document.getElementById('canvas');
+  //console.log(canvas);
 
   jsPlumbBrowserUI.ready(function () {
     window.j = jsPlumbBrowserUI.newInstance({
