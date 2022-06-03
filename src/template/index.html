@@ -11,10 +11,10 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.css">
     <link rel="stylesheet" href="codemirror.css">
-    <link rel="stylesheet" href="diagram.css">
 
     <link rel="stylesheet" href="jsplumbtoolkit.css">
     <link rel="stylesheet" href="jsplumbtoolkit-demo.css">
+    <link rel="stylesheet" href="diagram.css">
 
   </head>
   <body>
@@ -49,14 +49,14 @@ nodes:
         col: 3
         border: false
 edges:
-  - source: n1
-    target: n2
+  - from: n1
+    to: n2
     anchor: AutoDefault
     endpoints:
         - Dot
         - Blank
     overlays:
-        - type: Arrow
+        - type: PlainArrow
           options:
             location: 1
         - type: Label

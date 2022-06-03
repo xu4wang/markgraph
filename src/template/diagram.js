@@ -60,9 +60,10 @@ function parse() {
 
   try {
     obj = jsyaml.load(str, { schema: SEXY_SCHEMA });
-    draw(obj);
     result.error = false;
     result.json = obj;
+    window.diagram_attrs = result;  //store the JSON configuration object in window.diagram_attrs.
+    draw(obj);
   } catch (err) {
     result.error = true;
     result.json = err.message || String(err);
@@ -129,7 +130,6 @@ window.onload = function () {
 
   // initial source
   updateSource();
-  window.diagram_attrs = result;  //store the JSON configuration object in window.diagram_attrs.
   //it will be updated automatically. by the timer.
   var canvas = document.getElementById('canvas');
   //console.log(canvas);
@@ -137,7 +137,7 @@ window.onload = function () {
   jsPlumbBrowserUI.ready(function () {
     window.j = jsPlumbBrowserUI.newInstance({
       dragOptions: { cursor: 'pointer', zIndex: 2000 },
-      paintStyle: { stroke: '#666' },
+      paintStyle: { stroke: '#666', strokeWidth:2 },
       endpointHoverStyle: { fill: 'orange' },
       hoverPaintStyle: { stroke: 'orange' },
       endpointStyle: { width: 20, height: 16, stroke: '#666' },

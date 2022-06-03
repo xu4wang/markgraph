@@ -10,8 +10,8 @@ function id2element(id) {
 
 
 function add_edge(attrs) {
-  attrs.source = id2element(attrs.source);
-  attrs.target = id2element(attrs.target);
+  attrs.source = id2element(attrs.from);
+  attrs.target = id2element(attrs.to);
   var instance = window.j;
   instance.connect(attrs);
 }

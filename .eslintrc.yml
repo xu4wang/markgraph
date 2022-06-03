@@ -6,7 +6,6 @@ env:
 globals:
   Uint8Array: false
   jsPlumbBrowserUI: readonly
-  canvas: readonly
 
 ignorePatterns:
   - dist/
