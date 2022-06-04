@@ -8,6 +8,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
     <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.6/css/bootstrap.css">
     <link rel="stylesheet" href="codemirror.css">
@@ -18,6 +20,7 @@
 
   </head>
   <body>
+    <a href="https://github.com/xu4wang/diagram" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 
     <div class="header">
       <h1>Diagram Builder</h1>
@@ -25,45 +28,69 @@
     <div id="content">
       <div id="src">
         <h4 class="subheader"><a href="#" id="permalink">permalink</a> Edit source here:</h4>
-        <textarea id="source">---
-diagram:
-    grid_width: 300  # 640 pixels width
-    grid_height: 300  # 480 pixels heigth
-    grid_padding: 0.3   # 20% blank around the nodes
+        <textarea id="source">
+default:
+  width: 100
+  height: 100
+  top: 100
+  left: 100
 nodes:
-    n1:
-        title: World Bank
-        img: https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fhbimg.b0.upaiyun.com%2Fa4365c3b20413f92c9763f2fcbddca231412c47c20d01-nFvQZ0_fw658&refer=http%3A%2F%2Fhbimg.b0.upaiyun.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1656583888&t=7b63e4ff923c0a717edc60a07c14f1d4
-        row: 1   # put it in (1,1) 
-        col: 1
-        border: 2px dashed green
-    n2:
-        title: EDC Machine
-        img: https://img2.baidu.com/it/u=4189416670,2802646474&fm=253&fmt=auto&app=138&f=JPEG?w=614&h=414
-        row: 1   # put it in (1,1) 
-        col: 2
-    n3:
-        title: Wine Dealer
-        img: https://img1.baidu.com/it/u=310438553,3465145814&fm=253&fmt=auto&app=120&f=JPEG?w=341&h=192
-        row: 2   # put it in (1,1) 
-        col: 3
-        border: false
+  n1:
+    top: 31px
+    left: 52px
+    border: 2px dashed green
+    md: >
+      ![](https://img0.baidu.com/it/u=2858396836,3387897168&fm=253&fmt=auto&app=138&f=JPEG)
+
+
+
+      Markdown
+  n2:
+    top: 9px
+    left: 637px
+    width: 200
+    height: 200
+    md: |
+      ![](https://www.json.org/img/json160.gif)
+
+      JSON
+  n3:
+    top: 294px
+    left: 54px
+    border: false
+    height: 100
+    md: >
+      ![](https://p3.itc.cn/q_70/images03/20210824/491f8573163b4e9aa95b465839726d34.png)
+
+      YAML
+  n4:
+    top: 269px
+    left: 386px
+    height: 300
+    width: 500
+    text-align: left
+    padding-left: 20px
+    background-color: yellow
+    border: 0px
+    md: |
+      ### Topic
+      1. item 1
+      2. item 2
 edges:
   - from: n1
     to: n2
-    anchor: AutoDefault
-    endpoints:
-        - Dot
-        - Blank
-    overlays:
-        - type: PlainArrow
-          options:
-            location: 1
-        - type: Label
-          options:
-            label: foo
-            location: 50
-            id: mylabel
+    label: 2️⃣
+    paintStyle:
+      strokeWidth: 1
+      stroke: red
+  - from: n2
+    to: n3
+    label: 🏦 create
+  - from: n3
+    to: n1
+
+        
+
 </textarea>
       </div>
       <div id="resize">
@@ -75,7 +102,6 @@ edges:
         </div>
       </div>
     </div>
-
     <script src="jsplumb.util.umd.js"></script>
     <script src="jsplumb.common.umd.js"></script>
     <script src="jsplumb.core.umd.js"></script>

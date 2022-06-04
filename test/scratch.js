@@ -1,46 +1,18 @@
-'use strict';
 
-var merge = require('merge-deep');
 
-/*
-instance.connect({
-    source:someElement,
-    target:someOtherElement,
-    anchor: "AutoDefault",
-    endpoints: ["Dot", "Blank"], 
-    overlays:[ 
-        { type:"Arrow", options:{location:1}},
-        { 
-            type:"Label", 
-            options:{ label:"foo", location:50, id:"myLabel" } 
-        }
-    ]
-})
-*/
-
-function id2element(id) {
-  var node = window.diagram_nodes[id];
-  return node.ele;
-}
-
-function add_edge(attrs) {
-  attrs.source = id2element(attrs.source);
-  attrs.target = id2element(attrs.target);
-  var instance = window.j;
-  instance.connect(attrs);
-}
-
-function add_edges(diag_attrs) {
-  var edges = diag_attrs.edges;
-  for (let n in edges) {
-      add_edge(edges[n]);
+//retrieve the top/left parameters of each node, rebuild yaml
+function save_yaml(){
+  //node list
+  var nodes = window.diagram_attrs.json.notes;
+  for (let n in nodes) {
+    if (nodes.hasOwnProperty(n)) {
+      let e = document.getElementById(n)
+      nodes[n].left = e.style.left;
+      nodes[n].top = e.style.top;
+    }
   }
-}
+  //rebuild yaml
 
-function clear_edges() {
-  //clear all the nodes
-  window.j.reset();
+  var y = window.diagram_jsyaml.dump(window.diagram_attrs.json);
+  window.diagram_source.setValue(y);
 }
-
-exports.add_edges = add_edges;
-exports.clear_edges = clear_edges;

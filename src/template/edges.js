@@ -1,19 +1,41 @@
 'use strict';
 
-//var merge = require('merge-deep');
+var mixin = require('mixin-deep');
 
 
 function id2element(id) {
-  var node = window.diagram_nodes[id];
-  return node.ele;
+  //var node = window.diagram_nodes[id];
+  //return node.ele;
+  return document.getElementById(id);
 }
 
-
 function add_edge(attrs) {
-  attrs.source = id2element(attrs.from);
-  attrs.target = id2element(attrs.to);
+  var default_attrs = {
+    anchor: 'Continuous',
+    paintStyle: {
+      strokeWidth: 2,
+      stroke: 'green'
+    },
+    endpoints: [ 'Blank', 'Blank' ],
+    overlays: [ { type: 'PlainArrow', options: {
+      location: 1
+    } } ]
+  };
+  var default_label = {
+    type:'Label',
+    options:{
+      label:'default'
+    }
+  };
+  if ('label' in attrs) {
+    default_label.options.label = attrs.label;
+    default_attrs.overlays.push(default_label);
+  }
+  default_attrs.source = id2element(attrs.from);
+  default_attrs.target = id2element(attrs.to);
   var instance = window.j;
-  instance.connect(attrs);
+  default_attrs = mixin(default_attrs, attrs);
+  instance.connect(default_attrs);
 }
 
 function add_edges(diag_attrs) {

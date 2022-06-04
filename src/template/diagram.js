@@ -14,7 +14,6 @@ var edges      = require('./edges.js');
 require('codemirror/mode/yaml/yaml.js');
 require('codemirror/mode/javascript/javascript.js');
 
-
 var source, result = {}, permalink, default_text;
 
 var SexyYamlType = new jsyaml.Type('!sexy', {
@@ -81,6 +80,22 @@ function updateSource() {
   parse();
 }
 
+//retrieve the top/left parameters of each node, rebuild yaml
+function save_yaml() {
+  //node list
+  var nodes = window.diagram_attrs.json.nodes;
+  for (let n in nodes) {
+    if (nodes.hasOwnProperty(n)) {
+      let e = document.getElementById(n);
+      nodes[n].left = e.style.left;
+      nodes[n].top = e.style.top;
+    }
+  }
+  //rebuild yaml
+  var y = jsyaml.dump(window.diagram_attrs.json);
+  source.setValue(y);
+}
+
 window.onload = function () {
 
   var resize = document.getElementById('resize');
@@ -145,6 +160,11 @@ window.onload = function () {
       anchors: [ 'TopCenter', 'TopCenter' ],
       container: canvas,
       dropOptions:{ activeClass:'dragActive', hoverClass:'dropHover' }
+    });
+    //update yaml in case the position changed.
+    //eslint-disable-next-line
+    window.j.bind(jsPlumbBrowserUI.EVENT_DRAG_STOP, (p) => { 
+      save_yaml();
     });
   });
 };

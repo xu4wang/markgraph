@@ -10,6 +10,7 @@ body {
 
 .header {
   padding: 1px 0 30px;
+  display: flex;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -80,7 +81,6 @@ body {
 /** ELEMENTS **/
 .drag-drop-demo .window {
   font-family: serif;
-  font-style: italic;
   background-color: white;
   border: 1px solid #346789;
   text-align: center;
