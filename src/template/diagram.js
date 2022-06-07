@@ -1,103 +1,108 @@
 'use strict';
 
+//const { default: nodeResolve } = require('@rollup/plugin-node-resolve');
 /* eslint-env browser */
-
-var jsyaml     = require('js-yaml');
 var codemirror = require('codemirror');
-var base64     = require('./base64');
-var nodes      = require('./node.js');
-var edges      = require('./edges.js');
-
-//var inspect    = require('util').inspect;
-
+var m = require('./model');
+var node = require('./node');
+var edge = require('./edges');
 
 require('codemirror/mode/yaml/yaml.js');
-require('codemirror/mode/javascript/javascript.js');
+require('codemirror/mode/markdown/markdown.js');
 
-var source, result = {}, permalink, default_text;
-
-var SexyYamlType = new jsyaml.Type('!sexy', {
-  kind: 'sequence', // See node kinds in YAML spec: http://www.yaml.org/spec/1.2/spec.html#kind//
-  construct: function (data) {
-    return data.map(function (string) { return 'sexy ' + string; });
-  }
-});
-
-var SEXY_SCHEMA = jsyaml.DEFAULT_SCHEMA.extend([ SexyYamlType ]);
-
-
-function clear_canvas() {
-  window.j.reset();  //remove all connections, endpoints.
-  //remove all DOMs created by nodes.
-  nodes.clear_nodes();
-  edges.clear_edges();
-}
-
-function draw_nodes(obj) {
-  nodes.add_nodes(obj);
-}
-
-//eslint-disable-next-line
-function draw_edges(obj) {
-  edges.add_edges(obj);
-}
-
-function draw(obj) {
-  //update canvas
-  clear_canvas();
-  draw_nodes(obj);
-  draw_edges(obj);
-}
-
-function parse() {
-  var str, obj;
-
-  str = source.getValue();
-  permalink.href = '#yaml=' + base64.encode(str);
-  result['error'] = false;
-  result['json'] = {};
-
-  try {
-    obj = jsyaml.load(str, { schema: SEXY_SCHEMA });
-    result.error = false;
-    result.json = obj;
-    window.diagram_attrs = result;  //store the JSON configuration object in window.diagram_attrs.
-    draw(obj);
-  } catch (err) {
-    result.error = true;
-    result.json = err.message || String(err);
-  }
-}
-
-function updateSource() {
-  var yaml;
-
-  if (location.hash && location.hash.toString().slice(0, 6) === '#yaml=') {
-    yaml = base64.decode(location.hash.slice(6));
-  }
-
-  source.setValue(yaml || default_text);
-  parse();
-}
+var source, permalink, default_text, dropdown;
 
 //retrieve the top/left parameters of each node, rebuild yaml
-function save_yaml() {
-  //node list
-  var nodes = window.diagram_attrs.json.nodes;
-  for (let n in nodes) {
-    if (nodes.hasOwnProperty(n)) {
-      let e = document.getElementById(n);
-      nodes[n].left = e.style.left;
-      nodes[n].top = e.style.top;
-    }
+function node_moved() {
+  //update model
+  var nodes = m.get_node_names();
+  for (let n of nodes) {
+    let e = document.getElementById(n);
+    m.update_node_attr(n, 'left', e.style.left);
+    m.update_node_attr(n, 'top', e.style.top);
   }
-  //rebuild yaml
-  var y = jsyaml.dump(window.diagram_attrs.json);
-  source.setValue(y);
+  //no need to update view
+  m.json_update_yaml();
+}
+
+
+
+function update_permlink() {
+  permalink.href = '#diag=' + m.build_permlink();
+}
+
+function update_dropdown() {
+  dropdown.onchange = function () {
+  };
+
+  while (dropdown.options.length > 0) {
+    dropdown.remove(0);
+  }
+  var opt = document.createElement('option');
+  dropdown.appendChild(opt);
+  opt.text = 'diagram';
+  opt.value = 'diagram';
+  var names = m.get_node_names();
+  for (const el of names) {
+    opt = document.createElement('option');
+    dropdown.appendChild(opt);
+    opt.text = el;
+    opt.value = el;
+  }
+  dropdown.value = m.get_active_document;
+
+
+  dropdown.onchange = function () {
+    var n = dropdown.value;
+    if (n === 'diagram') {
+      source.setOption('mode', 'yaml');
+    } else {
+      source.setOption('mode', 'markdown');
+    }
+    source.setValue(m.get_document_content(n));
+    m.set_active_document(n);
+  };
+}
+
+function update_view() {
+  update_permlink();
+  update_dropdown();
+  if (window.j) {
+    window.j.reset();
+    node.add_nodes(m);
+    edge.add_edges(m.get_edges());
+  }
+  //clear canvas
+  //redraw diagram
+}
+
+function document_changed() {
+  var str, name;
+  str = source.getValue();
+  name = m.get_active_document();
+  if (name === 'diagram') {
+    m.update_document(name, 'yaml', str);
+    update_dropdown();
+    dropdown.value = 'diagram';
+  } else {
+    m.update_document(name, 'markdown', str);
+  }
+  update_view();
+  //update_permlink();
+}
+
+function open_document() {
+  if (location.hash && location.hash.toString().slice(0, 6) === '#diag=') {
+    m.init_from_permlink(location.hash.slice(6));
+  } else {
+    m.update_document('diagram', 'yaml', default_text);
+  }
+  m.set_active_document('diagram');
+  source.setValue(m.get_document_content('diagram'));
+  update_view();
 }
 
 window.onload = function () {
-
   var resize = document.getElementById('resize');
   var left = document.getElementById('src');
   var right = document.getElementById('dst');
@@ -129,22 +134,25 @@ window.onload = function () {
   };
 
   permalink    = document.getElementById('permalink');
+  dropdown     = document.getElementById('dropdown');
   default_text = document.getElementById('source').value || '';
 
   source = codemirror.fromTextArea(document.getElementById('source'), {
     mode: 'yaml',
     lineNumbers: true
   });
+  //setOption("mode", mode); to switch markdown and yaml
 
   var timer;
 
   source.on('change', function () {
     clearTimeout(timer);
-    timer = setTimeout(parse, 500);
+    timer = setTimeout(document_changed, 500);
   });
 
   // initial source
-  updateSource();
+  open_document();
+
   //it will be updated automatically. by the timer.
   var canvas = document.getElementById('canvas');
   //console.log(canvas);
@@ -161,10 +169,12 @@ window.onload = function () {
       container: canvas,
       dropOptions:{ activeClass:'dragActive', hoverClass:'dropHover' }
     });
+
+    window.diagram_model = m;
     //update yaml in case the position changed.
     //eslint-disable-next-line
     window.j.bind(jsPlumbBrowserUI.EVENT_DRAG_STOP, (p) => { 
-      save_yaml();
+      node_moved();
     });
   });
 };

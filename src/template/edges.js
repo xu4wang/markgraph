@@ -38,8 +38,7 @@ function add_edge(attrs) {
   instance.connect(default_attrs);
 }
 
-function add_edges(diag_attrs) {
-  var edges = diag_attrs.edges;
+function add_edges(edges) {
   for (let n in edges) {
     if (edges.hasOwnProperty(n)) {
       add_edge(edges[n]);

@@ -15,41 +15,26 @@ function add_px(value) {
   return value;
 }
 
-class Node {
-  constructor(id, attrs) {
-    this.id = id;
-    var childNode = document.createElement('div');
-    childNode.innerHTML = '';
-    childNode.className = 'window';
-    childNode.id = id;
-    for (let k in attrs) {
-      if (attrs.hasOwnProperty(k)) {
-        if (k === 'md') {
-          //generating HTMB from markdown
-          var md2html = window.markdownit();
-          let h = md2html.render(attrs.md);
-          childNode.innerHTML = h;
-        } else {
-          childNode.style[k] = attrs[k];
-        }
-      }
+function node(id, attrs, md) {
+  var childNode = document.createElement('div');
+  childNode.innerHTML = '';
+  childNode.className = 'window';
+  childNode.id = id;
+  for (let k in attrs) {
+    if (attrs.hasOwnProperty(k)) {
+      childNode.style[k] = attrs[k];
     }
-    this.ele = childNode;
-    var canvas = document.getElementById(attrs.parent);
-    canvas.appendChild(childNode);
   }
-
-  layout(width, height, top, left) {
-    this.ele.style.top = add_px(top);
-    this.ele.style.left = add_px(left);
-    this.ele.style.width = add_px(width);
-    this.ele.style.height = add_px(height);
-  }
+  var md2html = window.markdownit();
+  let h = md2html.render(md);
+  childNode.innerHTML = h;
+  var canvas = document.getElementById(attrs.parent);
+  canvas.appendChild(childNode);
 }
 
 //add a node
 //rol, col, width, height, padding,id,title,parent,img, border
-function add_node(diag, id, attrs) {
+function add_node(id, attrs, md) {
   var default_attrs = {
     top: 100,
     left: 100,
@@ -58,41 +43,26 @@ function add_node(diag, id, attrs) {
     id: id,
     parent: 'canvas'
   };
-  default_attrs = Object.assign(default_attrs, diag, attrs);
-  var n = new Node(id, default_attrs);
-  n.layout(default_attrs.width, default_attrs.height, default_attrs.top, default_attrs.left);
-  //var nodes = window.diagram_nodes || {};
-  //nodes[attrs.id] = n;
-  //window.diagram_nodes = nodes;
-  //if (window.j) {
-  //window.j.setContainer('canvas');
-  window.j.manage(n.ele);
-  //}
+  default_attrs = Object.assign(default_attrs, attrs);
+  default_attrs.top = add_px(default_attrs.top);
+  default_attrs.left = add_px(default_attrs.left);
+  default_attrs.width = add_px(default_attrs.width);
+  default_attrs.height = add_px(default_attrs.height);
+  node(id, default_attrs, md);
 }
 
-function add_nodes(diag_attrs) {
-  var diag = diag_attrs.default;
-  var nodes = diag_attrs.nodes;
-  for (let n in nodes) {
-    if (nodes.hasOwnProperty(n)) {
-      var attrs = nodes[n];
-      add_node(diag, n, attrs);
-    }
+function add_nodes(model) {
+  var l = model.get_node_names();
+  for (let n of l) {
+    var a = model.get_node_attrs(n);
+    var md = model.get_document_content(n);
+    add_node(n, a, md);
   }
 }
 
 function clear_nodes() {
   //clear all the nodes
-
-  /* No need. since every node is managed by jsplumb and the j instance reset will remove nodes too.
-  var nodes = window.diagram_nodes || {};
-  for (let n in nodes) {
-    if (nodes.hasOwnProperty(n)) {
-      nodes[n].ele.remove();
-    }
-  }
-  */
-  //window.diagram_nodes = {};
+  /* No need. since every node is managed by jsplumb and the j instance reset will remove nodes too. */
 }
 
 exports.add_nodes = add_nodes;
