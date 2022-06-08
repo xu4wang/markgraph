@@ -9,10 +9,14 @@ body {
 }
 
 .header {
-  padding: 1px 0 30px;
+  padding: 1px 0 0px;
   display: flex;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.subheader {
+  margin: 4px;
 }
 
 #content {
