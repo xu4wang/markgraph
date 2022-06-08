@@ -140,7 +140,7 @@ edges:
     d = m.get_node_names();
     expect(d).toContain('n1');
     expect(d).toContain('n4');
-    expect(d).toContain('diagram');
+    //expect(d).toContain('diagram');
 });
 
 
@@ -200,7 +200,7 @@ edges:
     d = m.get_node_names();
     expect(d).toContain('n1');
     expect(d).toContain('n4');
-    expect(d).toContain('diagram');
+    //expect(d).toContain('diagram'); //diagram is not a node
     //console.log(m.get_documents());
 });
 

@@ -7,6 +7,34 @@ n1.layout(2,1,300,200,0.2);
 var n2 = new Node("n1","baidu",'canvas','https://www.baidu.com/img/flexible/logo/pc/result@2.png','5px');
 n2.layout(2,2,300,200,0.2);
 */
+//const { markdownItImageSize } = require('markdown-it-image-size');
+
+/*
+
+const MarkdownIt = require('markdown-it');
+const { markdownItImageSize } = require('markdown-it-image-size');
+
+const mdrenderer = MarkdownIt();
+mdrenderer.use(markdownItImageSize);
+*/
+
+const { Remarkable } = require('remarkable');
+const { escapeHtml } = require('remarkable').utils;
+var md2html = new Remarkable();
+
+md2html.renderer.rules.image = (function () {
+  var original = md2html.renderer.rules.image;
+  //eslint-disable-next-line
+  return function(tokens, idx, opt, env) {
+    var width = escapeHtml(tokens[idx].title);
+    var imgOutput = original.apply(this, arguments);
+    // add width
+    if (width) {
+      return  imgOutput.substring(0, imgOutput.length - 1) + ' width="' + width + '">';
+    }
+    return imgOutput;
+  };
+})();
 
 function add_px(value) {
   if (!isNaN(parseFloat(value)) && isFinite(value)) {
@@ -25,7 +53,8 @@ function node(id, attrs, md) {
       childNode.style[k] = attrs[k];
     }
   }
-  var md2html = window.markdownit();
+  //var md2html = window.markdownit();
+  //md2html.use(markdownItImageSize);
   let h = md2html.render(md);
   childNode.innerHTML = h;
   var canvas = document.getElementById(attrs.parent);
