@@ -129,6 +129,9 @@ function update_node_attr(id, key, value) {
   //update JSON object first,
   //update yaml accordingly
   var nodes = window.diagram_documents.documents.diagram.json.nodes;
+  if (!nodes[id]) {
+    nodes[id] = {};
+  }
   nodes[id][key] = value;
 }
 
