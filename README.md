@@ -1,18 +1,18 @@
 # diagram
-Generating diagram from yaml.
 
-http://127.0.0.1:5500/dist/#diag=eyJkaWFncmFtIjoiZGVmYXVsdDpcbiAgd2lkdGg6IDEwMFxuICBoZWlnaHQ6IDEwMFxuICB0b3A6IDEwMFxuICBsZWZ0OiAxMDBcbm5vZGVzOlxuICBuMTpcbiAgICB0b3A6IDQ1cHhcbiAgICBsZWZ0OiAxMzJweFxuICAgIGJvcmRlcjogMnB4IGRhc2hlZCBncmVlblxuICBuMjpcbiAgICB0b3A6IDlweFxuICAgIGxlZnQ6IDYzN3B4XG4gICAgd2lkdGg6IDIwMFxuICAgIGhlaWdodDogMjAwXG4gIG4zOlxuICAgIHRvcDogMjk0cHhcbiAgICBsZWZ0OiA1NHB4XG4gICAgYm9yZGVyOiBmYWxzZVxuICAgIGhlaWdodDogMTAwXG4gIG40OlxuICAgIHRvcDogMjY5cHhcbiAgICBsZWZ0OiAzODZweFxuICAgIGhlaWdodDogMzAwXG4gICAgd2lkdGg6IDUwMFxuICAgIHRleHQtYWxpZ246IGxlZnRcbiAgICBwYWRkaW5nLWxlZnQ6IDIwcHhcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB5ZWxsb3dcbiAgICBib3JkZXI6IDBweFxuZWRnZXM6XG4gIC0gZnJvbTogbjFcbiAgICB0bzogbjJcbiAgICBsYWJlbDogMu+4j+KDo1xuICAgIHBhaW50U3R5bGU6XG4gICAgICBzdHJva2VXaWR0aDogMVxuICAgICAgc3Ryb2tlOiByZWRcbiAgLSBmcm9tOiBuMlxuICAgIHRvOiBuM1xuICAgIGxhYmVsOiBjcmVhdGVcbiAgLSBmcm9tOiBuM1xuICAgIHRvOiBuMVxuIiwibjEiOiIhW10oaHR0cHM6Ly9pbWcwLmJhaWR1LmNvbS9pdC91PTI4NTgzOTY4MzYsMzM4Nzg5NzE2OCZmbT0yNTMmZm10PWF1dG8mYXBwPTEzOCZmPUpQRUcpXG4iLCJuMiI6IiFbXShodHRwczovL3d3dy5qc29uLm9yZy9pbWcvanNvbjE2MC5naWYpXG5cbkpTT04iLCJuMyI6IiIsIm40IjoiIn0=
+Generating diagram from yaml/markdown.
 
+[Live Demo is avalable here!](http://awis.me/diagram/#diag=eyJkaWFncmFtIjoiZGVmYXVsdDpcbiAgd2lkdGg6IDEwMFxuICBoZWlnaHQ6IDEwMFxuICB0b3A6IDEwMFxuICBsZWZ0OiAxMDBcbm5vZGVzOlxuICBuMTpcbiAgICB0b3A6IDEycHhcbiAgICBsZWZ0OiAxMDJweFxuICAgIGJvcmRlcjogMnB4IGRhc2hlZCBncmVlblxuICAgIGhlaWdodDogMTIwXG4gICAgd2lkdGg6IDEyMFxuICBuMjpcbiAgICB0b3A6IDhweFxuICAgIGxlZnQ6IDcyOHB4XG4gICAgd2lkdGg6IDIwMFxuICAgIGhlaWdodDogMjAwXG4gIG4zOlxuICAgIHRvcDogMzk5cHhcbiAgICBsZWZ0OiA5NHB4XG4gICAgYm9yZGVyOiBmYWxzZVxuICAgIGhlaWdodDogMTQwXG4gICAgd2lkdGg6IDEwMFxuICBuNTpcbiAgICB0b3A6IDIxNXB4XG4gICAgbGVmdDogMTg3cHhcbiAgICBib3JkZXI6IGZhbHNlXG4gICAgaGVpZ2h0OiAxMDBcbiAgbjQ6XG4gICAgdG9wOiAzMDVweFxuICAgIGxlZnQ6IDQ2OXB4XG4gICAgaGVpZ2h0OiAyMDBcbiAgICB3aWR0aDogMzAwXG4gICAgdGV4dC1hbGlnbjogbGVmdFxuICAgIHBhZGRpbmctbGVmdDogMjBweFxuICAgIGJhY2tncm91bmQtY29sb3I6IHllbGxvd1xuICAgIGJvcmRlcjogMHB4XG4gICAgei1pbmRleDogMVxuZWRnZXM6XG4gIC0gZnJvbTogbjFcbiAgICB0bzogbjJcbiAgICBsYWJlbDogMu+4j+KDo1xuICAgIHBhaW50U3R5bGU6XG4gICAgICBzdHJva2VXaWR0aDogMVxuICAgICAgc3Ryb2tlOiByZWRcbiAgLSBmcm9tOiBuMlxuICAgIHRvOiBuM1xuICAgIGxhYmVsOiBjcmVhdGVcbiAgLSBmcm9tOiBuM1xuICAgIHRvOiBuMVxuICAtIGZyb206IG41XG4gICAgdG86IG4xXG4iLCJuMSI6Im4xXG5cbiFbXShodHRwczovL3AzLml0Yy5jbi9xXzcwL2ltYWdlczAzLzIwMjEwODI0LzQ5MWY4NTczMTYzYjRlOWFhOTViNDY1ODM5NzI2ZDM0LnBuZylcblxuIiwibjIiOiJuMlxuXG4hW10oaHR0cHM6Ly93d3cuanNvbi5vcmcvaW1nL2pzb24xNjAuZ2lmKSIsIm4zIjoibjNcblxuIVtdKGh0dHBzOi8vYXZhdGFycy5naXRodWJ1c2VyY29udGVudC5jb20vdS8zMTEzOTc/dj00KSIsIm41IjoibjUiLCJuNCI6IipuNCpcblxudGhpcyBpcyBhIG5vdGUgaW4gbWFya2Rvd25cbnlvdSBjYW4gZXZlbiBwdXQgYSB0YWJsZSBoZXJlXG5cbnwgaXRlbTEgfCBpdGVtMiB8XG58Oi0tLS0tLS18Oi0tLS0tLTp8XG58IHZhbHVlIDF8dGhpcyBpcyBhIGxvbmcgdmFsdWUgMnxcblxuLS0tLVxuXG4qIGtra1xuKiBsbGxcbiJ9)
 
 # The Idea
 
-* A diagram is a connection of nodes and edges. 
+* A diagram is a collection of nodes and edges. 
+* Each node is defined by a markdown file
 * There is one YAML file, defines:
-  *  Nodes: location, size and style.
+  *  The apperence of the nodes: location, size and style.
   *  Edges: direction, style, label.
-* There are multiple markdown files define the content of nodes, one markdown for one node.
-* The location of one node can either be customized by modifying YAML file, or drag & drop the generated node in the diagram. In the later case, the related paremeters, say ```top``` and ```left``` in YAML will be updated automatically.
-* The diagram can be exported in ```permlink``` address. All the information in the YAML and markdowns will be embedded in the exported URL paramters.
+* The location of one node can either be customized by modifying parameters in the YAML file, or drag & drop the generated node in the diagram. In the later case, the related paremeters, say ```top``` and ```left``` in YAML will be updated automatically.
+* The diagram can be exported in ```permlink``` address. All the information in the YAML and markdowns will be embedded in the exported URL. You can share the URL as a copy of the editable version of the diagram.
 # Quick Start 
 
 1. modify the yaml file to define the structure of the diagram
@@ -72,9 +72,9 @@ edges:
 JSON
 ```
 
-# TODO
+# Features
 
-[x]  URL parameter format:  ```diag=.... ``` while the value is a serialized json object with below format:
+[x]  Use permlink to share editable diagram. URL parameter format:  ```diag=.... ``` while the value is a serialized json object with below format:
 
 ```json
 {
@@ -84,5 +84,22 @@ JSON
     ...
 }
 ```
-[x] Use a dropdown control to select one item in the diag json object to be edited
-[ ] Double click one node to select it in the codemirror editor and dropdown control
+[x] Use dropdown control to select one item, the diagram layout defination or one node to edit.
+[x] Double click one node to select it in the source editor.
+[x] Syntax highlight for YAML(diagram layout defination) and Markdown(node defination).
+
+# HOWTO
+
+## Customize node
+
+### Add image to a node
+
+### Bring one node to the back, as a background image
+
+### Size, position, color etc
+## Customize Edge
+
+### Add label to a edge
+
+## Share an editable diagram
+

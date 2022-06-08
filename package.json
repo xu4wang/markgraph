@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint .",
-    "build": "npm run lint && node src/build.js"
+    "build": "npm run lint && node src/build.js",
+    "deploy": "node src/deploy.js"
   },
   "repository": {
     "type": "git",
