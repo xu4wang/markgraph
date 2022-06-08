@@ -74,7 +74,7 @@ JSON
 
 # TODO
 
-[ ]  URL parameter format:  ```diag=.... ``` while the value is a serialized json object with below format:
+[x]  URL parameter format:  ```diag=.... ``` while the value is a serialized json object with below format:
 
 ```json
 {
@@ -84,5 +84,5 @@ JSON
     ...
 }
 ```
-[ ] Use a dropdown control to select one item in the diag json object to be edited
+[x] Use a dropdown control to select one item in the diag json object to be edited
 [ ] Double click one node to select it in the codemirror editor and dropdown control

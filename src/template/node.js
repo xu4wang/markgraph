@@ -30,6 +30,7 @@ function node(id, attrs, md) {
   childNode.innerHTML = h;
   var canvas = document.getElementById(attrs.parent);
   canvas.appendChild(childNode);
+  window.j.manage(childNode);
 }
 
 //add a node

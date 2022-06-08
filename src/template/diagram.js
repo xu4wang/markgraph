@@ -21,8 +21,10 @@ function node_moved() {
     m.update_node_attr(n, 'left', e.style.left);
     m.update_node_attr(n, 'top', e.style.top);
   }
-  //no need to update view
   m.json_update_yaml();
+  if (m.get_active_document() === 'diagram') {
+    source.setValue(m.get_document_content('diagram'));
+  }
 }
 
 
@@ -64,16 +66,23 @@ function update_dropdown() {
   };
 }
 
+function node_selected(p) {
+  //console.log(p);
+  m.set_active_document(p.id);
+  //update_dropdown();
+  dropdown.value = p.id;
+  source.setOption('mode', 'markdown');
+  source.setValue(m.get_document_content(p.id));
+}
+
 function update_view() {
   update_permlink();
-  update_dropdown();
+  //update_dropdown();
   if (window.j) {
     window.j.reset();
     node.add_nodes(m);
     edge.add_edges(m.get_edges());
   }
-  //clear canvas
-  //redraw diagram
 }
 
 function document_changed() {
@@ -100,6 +109,7 @@ function open_document() {
   m.set_active_document('diagram');
   source.setValue(m.get_document_content('diagram'));
   update_view();
+  update_dropdown();
 }
 
 window.onload = function () {
@@ -175,6 +185,10 @@ window.onload = function () {
     //eslint-disable-next-line
     window.j.bind(jsPlumbBrowserUI.EVENT_DRAG_STOP, (p) => { 
       node_moved();
+    });
+
+    window.j.bind(jsPlumbBrowserUI.EVENT_ELEMENT_DBL_CLICK, (p) => {
+      node_selected(p);
     });
   });
 };
