@@ -10,7 +10,7 @@ var edge = require('./edges');
 require('codemirror/mode/yaml/yaml.js');
 require('codemirror/mode/markdown/markdown.js');
 
-var source, permalink, default_text, dropdown;
+var source, permalink, default_text, dropdown, diag_name = 'diagram';
 
 //retrieve the top/left parameters of each node, rebuild yaml
 function node_moved() {
@@ -32,7 +32,7 @@ function node_moved() {
 function update_permlink() {
   var data =  m.build_permlink();
   permalink.href = '#diag=' + data;
-  window.localStorage.setItem('diagram', data);
+  window.localStorage.setItem(diag_name, data);
 }
 
 function update_dropdown() {
@@ -106,7 +106,8 @@ function open_document() {
   if (location.hash && location.hash.toString().slice(0, 6) === '#diag=') {
     m.init_from_permlink(location.hash.slice(6));
   } else {
-    let d = window.localStorage.getItem('diagram');
+    diag_name += location.hash;
+    let d = window.localStorage.getItem(diag_name);
     if (d) {
       m.init_from_permlink(d);
     } else {

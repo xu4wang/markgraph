@@ -89,6 +89,20 @@ JSON
 
 # HOWTO
 
+## backup your drawing
+
+Diagram internally use browser localStorage to keep the latest version of drawing.  
+There are 3 kinds of URLs.
+
+1. https://awis.me/diagram/
+2. https://awis.me/diagram/#diag=base64_encoded_diagram_data
+3. https://awis.me/diagram/#filename1
+
+The first one and second one are using the default local storage key. Any modification to the diagram will update the local storage default file immediately.
+
+The third one explicitly choose a local storage key.
+
+If you need to edit multiple diagrams simutaniously, it's safe to use hash plus filename scheme in the URL.
 # Developement
 
 ## Unit test
