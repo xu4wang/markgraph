@@ -3,77 +3,94 @@
 var jsyaml     = require('js-yaml');
 var base64     = require('./base64');
 
-/*---------------------- A Wrapper of the model ------------------------*/
+function parse(text, options, loadSafe) {
+  let contentKeyName = options && typeof options === 'string'
+    ? options
+    : options && options.contentKeyName
+      ? options.contentKeyName
+      : '__content';
 
-/*
-window.diagram_documents =
-{
-  documents : {
-    diagram: {
-      type: "yaml",
-      content: ... ,
-      json: ...  //JSON object
-      result: ...
+  //eslint-disable-next-line
+  let passThroughOptions = options && typeof options === 'object' ? options : undefined;
+
+  let re = /^(-{3}(?:\n|\r)([\w\W]+?)(?:\n|\r)-{3})?([\w\W]*)*/,
+      results = re.exec(text),
+      conf = {},
+      yamlOrJson;
+
+  if ((yamlOrJson = results[2])) {
+    if (yamlOrJson.charAt(0) === '{') {
+      conf = JSON.parse(yamlOrJson);
+    } else if (loadSafe) {
+      conf = jsyaml.safeLoad(yamlOrJson, passThroughOptions);
+    } else {
+      conf = jsyaml.load(yamlOrJson, passThroughOptions);
     }
-    n1: {
-      type: "markdown",
-      content: ...   //text string
-    }
-    ...
   }
-  active: "diagram";
-  names: ...
+
+  conf[contentKeyName] = results[3] || '';
+
+  return conf;
 }
-*/
+
+function loadFront(content, options) {
+  return parse(content, options, false);
+}
+
+/*---------------------- A Wrapper of the model ------------------------*/
 
 function get_documents() {
   //return a list of objects { name, type, content }
   return window.diagram_documents.documents;
 }
 
-function update_document(name, type, content) {
+function update_document(name, content) {
   var diagram_documents = window.diagram_documents || {};
   var result = diagram_documents.documents || {};
-  if (type === 'yaml') {
-    name = 'diagram';
-  }
+  var h = loadFront(content);
+
   result[name] = {
-    content: content,
-    type: type
+    body: h.__content,
+    content: content
   };
-  if (type === 'yaml') {
-    var names = new Set();
-    //names.add(name);
-    try {
-      var obj = jsyaml.load(content, { schema: jsyaml.DEFAULT_SCHEMA });
-      result[name].error = false;
-      result[name].json = obj;
-      //console.log(obj);
-      if (obj.nodes) {
-        for (let n in obj.nodes) {
-          if (obj.nodes.hasOwnProperty(n)) {
-            names.add(n);
-          }
-        }
-      }
-    } catch (err) {
-      result[name].error = true;
-      result[name].json = err.message || String(err);
-    }
-    diagram_documents.names = names;
+
+  try {    //store a JSON version in .json for the frontmatter
+    delete h.__content;
+    result[name].error = false;
+    result[name].json = h;   //...json.nodes = ['n1','n2',...]
+  } catch (err) {
+    result[name].error = true;
+    result[name].json = err.message || String(err);
   }
+
   diagram_documents.documents = result;
   window.diagram_documents = diagram_documents;
 }
 
-function get_node_names() {
+function get_subnode_names(id) {
   var diagram_documents = window.diagram_documents || {};
-  return diagram_documents.names;
+  if (diagram_documents.documents[id]) {
+    if (diagram_documents.documents[id].json.nodes) {
+      return diagram_documents.documents[id].json.nodes;
+    }
+  }
+  return [];
 }
 
 function get_document_content(id) {
   if (window.diagram_documents.documents[id]) {
-    return window.diagram_documents.documents[id].content;
+    var ret = '';
+    if (Object.keys(window.diagram_documents.documents[id].json).length !== 0) {
+      ret = '---\n' + jsyaml.dump(window.diagram_documents.documents[id].json) + '---';
+    }
+    return ret + window.diagram_documents.documents[id].body;
+  }
+  return '';
+}
+
+function get_document_body(id) {
+  if (window.diagram_documents.documents[id]) {
+    return window.diagram_documents.documents[id].body;
   }
   return '';
 }
@@ -94,19 +111,10 @@ function init_from_permlink(b64) {
   try {
     var obj_str = base64.decode(b64);
     var obj = JSON.parse(obj_str);
-    /*
-    diagram: ...
-    n1:...
-    n2:...
-    */
     if (obj) {
       for (let n in obj) {
         if (obj.hasOwnProperty(n)) {
-          if (n === 'diagram') {
-            update_document(n, 'yaml', obj[n]);
-          } else {
-            update_document(n, 'markdown', obj[n]);
-          }
+          update_document(n, obj[n]);
         }
       }
     } else {
@@ -121,62 +129,60 @@ function init_from_permlink(b64) {
 function build_permlink() {
   //generate b64 data
   var obj = {};
-  //obj.diagram =
-  var docs =  window.diagram_documents.documents;
-  obj.diagram = docs['diagram']['content'];
-  var names = window.diagram_documents.names;
-  for (const el of names) {
-    obj[el] = get_document_content(el);
+  var documents = window.diagram_documents.documents;
+  for (const el in documents) {
+    if (documents.hasOwnProperty(el)) {
+      obj[el] = get_document_content(el);
+    }
   }
   var obj_str = JSON.stringify(obj);
   return base64.encode(obj_str);
-
 }
 
-function update_node_attr(id, key, value) {
+function get_document_obj(id) {
+  if (!window.diagram_documents.documents[id]) {
+    return {};
+  }
+  return window.diagram_documents.documents[id].json;
+}
+
+function update_attr(id, key, value) {
   //update JSON object first,
   //update yaml accordingly
-  var nodes = window.diagram_documents.documents.diagram.json.nodes;
-  if (!nodes[id]) {
-    nodes[id] = {};
-  }
-  nodes[id][key] = value;
+  var obj = get_document_obj(id);
+  obj[key] = value;
 }
 
-function get_node_attr(id, key) {
+function get_attr(id, key) {
   //read node attr, if not available return the default attr value
-  var nodes = window.diagram_documents.documents.diagram.json.nodes;
-  var d = window.diagram_documents.documents.diagram.json.default;
-  var ret = d[key];
-  if (nodes[id]) {
-    if (nodes[id][key]) {
-      ret = nodes[id][key];
+  var obj = get_document_obj(id);
+  return obj[key];
+}
+
+function get_attrs(id) {
+  return get_document_obj(id);
+}
+
+function get_edges(doc) {
+  if (window.diagram_documents.documents[doc].json.edges) {
+    return window.diagram_documents.documents[doc].json.edges;
+  }
+  return [];
+}
+
+function get_all_names() {
+  var docs = window.diagram_documents.documents || {};
+  var ret = new Set();
+  for (let d in docs) {
+    if (docs.hasOwnProperty(d)) {
+      ret.add(d);
+      for (let s of get_subnode_names(d)) {
+        ret.add(s);
+      }
     }
   }
   return ret;
 }
-
-function get_node_attrs(id) {
-  var nodes = window.diagram_documents.documents.diagram.json.nodes;
-  var d = window.diagram_documents.documents.diagram.json.default;
-  var ret = {};
-  if (nodes[id]) {
-    return Object.assign(ret, d, nodes[id]);
-  }
-  return d;
-}
-
-function get_edges() {
-  return window.diagram_documents.documents.diagram.json.edges;
-}
-
-function json_update_yaml() {
-  var obj = window.diagram_documents.documents.diagram.json;
-  //rebuild yaml
-  var y = jsyaml.dump(obj);
-  window.diagram_documents.documents.diagram.content = y;
-}
-
 
 exports.init_from_permlink = init_from_permlink;
 exports.build_permlink = build_permlink;
@@ -187,11 +193,13 @@ exports.set_active_document = set_active_document;
 exports.get_documents = get_documents;
 exports.update_document = update_document;
 exports.get_document_content = get_document_content;
-exports.get_node_names = get_node_names;
+exports.get_document_body = get_document_body;
 
-exports.get_node_attr = get_node_attr;
-exports.update_node_attr = update_node_attr;
-exports.json_update_yaml = json_update_yaml;
-
+exports.get_subnode_names = get_subnode_names;
 exports.get_edges = get_edges;
-exports.get_node_attrs = get_node_attrs;
+
+exports.get_attr = get_attr;
+exports.update_attr = update_attr;
+exports.get_attrs = get_attrs;
+
+exports.get_all_names = get_all_names;

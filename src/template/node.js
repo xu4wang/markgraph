@@ -22,6 +22,8 @@ const { Remarkable } = require('remarkable');
 const { escapeHtml } = require('remarkable').utils;
 var md2html = new Remarkable();
 
+var edge = require('./edges');
+
 md2html.renderer.rules.image = (function () {
   var original = md2html.renderer.rules.image;
   //eslint-disable-next-line
@@ -55,6 +57,7 @@ function node(id, attrs, md) {
   }
   //var md2html = window.markdownit();
   //md2html.use(markdownItImageSize);
+  //console.log(md);
   let h = md2html.render(md);
   childNode.innerHTML = h;
   var canvas = document.getElementById(attrs.parent);
@@ -64,7 +67,7 @@ function node(id, attrs, md) {
 
 //add a node
 //rol, col, width, height, padding,id,title,parent,img, border
-function add_node(id, attrs, md) {
+function add_only_node(id, attrs, md) {
   var default_attrs = {
     top: 100,
     left: 100,
@@ -81,12 +84,16 @@ function add_node(id, attrs, md) {
   node(id, default_attrs, md);
 }
 
-function add_nodes(model) {
-  var l = model.get_node_names();
-  for (let n of l) {
-    var a = model.get_node_attrs(n);
-    var md = model.get_document_content(n);
-    add_node(n, a, md);
+//display all the nodes and edges in the active document
+function add_node(model, name) {
+  var l = model.get_subnode_names(name);
+  if (l.length === 0) {
+    add_only_node(name, model.get_attrs(name), model.get_document_body(name));
+  } else {
+    for (let n of l) {
+      add_node(model, n);
+    }
+    edge.add_edges(model.get_edges(name));
   }
 }
 
@@ -95,5 +102,5 @@ function clear_nodes() {
   /* No need. since every node is managed by jsplumb and the j instance reset will remove nodes too. */
 }
 
-exports.add_nodes = add_nodes;
+exports.add_node = add_node;
 exports.clear_nodes = clear_nodes;

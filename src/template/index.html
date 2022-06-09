@@ -28,36 +28,11 @@
   </h4>
     <div id="content">
       <div id="src">
-        <textarea id="source">
-default:
-  width: 100
-  height: 100
-  top: 100
-  left: 100
+        <textarea id="source">---
 nodes:
-  n1:
-    top: 31px
-    left: 52px
-    border: 2px dashed green
-  n2:
-    top: 9px
-    left: 637px
-    width: 200
-    height: 200
-  n3:
-    top: 294px
-    left: 54px
-    border: false
-    height: 100
-  n4:
-    top: 269px
-    left: 386px
-    height: 300
-    width: 500
-    text-align: left
-    padding-left: 20px
-    background-color: yellow
-    border: 0px
+  - n1
+  - n2
+  - n3
 edges:
   - from: n1
     to: n2
@@ -70,10 +45,8 @@ edges:
     label: create
   - from: n3
     to: n1
-
-        
-
-</textarea>
+---
+        </textarea>
       </div>
       <div id="resize">
       </div>

@@ -6,63 +6,26 @@ Generating diagram from yaml/markdown.
 # The Idea
 
 * A diagram is a collection of nodes and edges. 
-* Each node is defined by a markdown file
-* There is one YAML file, defines:
-  *  The apperence of the nodes: location, size and style.
-  *  Edges: direction, style, label.
-* The location of one node can either be customized by modifying parameters in the YAML file, or drag & drop the generated node in the diagram. In the later case, the related paremeters, say ```top``` and ```left``` in YAML will be updated automatically.
-* The diagram can be exported in ```permlink``` address. All the information in the YAML and markdowns will be embedded in the exported URL. You can share the URL as a copy of the editable version of the diagram.
+* A node is a diagram with only one node and no edge.  
+* A node is defined by a markdown file.
+  *  In the front matter section: the apperence of the node: location, size and style. 
+  *  In the markdown body: the content of the node.
+* A diagram is also defined by markdown file.
+  *  In the front matter section:
+     *  Default: the default attributes for all the nodes it has. 
+     *  Nodes: list of nodes in this diagram.  
+     *  Edges: direction, style, label.
+  *  In the markdown body: currently only for comment purpose.  
+* The location of one node can either be customized by modifying parameters in the markdown file, or drag & drop the generated node in the diagram. In the later case, the related paremeters, say ```top``` and ```left``` in markdown will be updated automatically.
+* The diagram can be exported in ```permlink``` address. All the information in the markdowns will be embedded in the exported URL. You can share the URL as a copy of the editable version of the diagram.
+
 # Quick Start 
 
-1. modify the yaml file to define the structure of the diagram
-2. modify each of the markdown file to define the content of each node
-3. copy the link address of the ```permlink``` and save it for future reference or sharing with friends. 
+1. modify each of the markdown file to define the content of each node
+2. copy the link address of the ```permlink``` and save it for future reference or sharing with friends. 
 
 ## diagram define example
 
-```yaml
-default:
-  width: 100
-  height: 100
-  top: 100
-  left: 100
-nodes:
-  n1:
-    top: 31px
-    left: 52px
-    border: 2px dashed green
-  n2:
-    top: 9px
-    left: 637px
-    width: 200
-    height: 200
-  n3:
-    top: 294px
-    left: 54px
-    border: false
-    height: 100
-  n4:
-    top: 269px
-    left: 386px
-    height: 300
-    width: 500
-    text-align: left
-    padding-left: 20px
-    background-color: yellow
-    border: 0px
-edges:
-  - from: n1
-    to: n2
-    label: 2️⃣
-    paintStyle:
-      strokeWidth: 1
-      stroke: red
-  - from: n2
-    to: n3
-    label: 🏦 create
-  - from: n3
-    to: n1
-```
 
 ## node define example
 
@@ -77,7 +40,6 @@ JSON
 
 ```json
 {
-    "diagram": "YAML format string to define the diagram nodes and edges",
     "n1": "Markdown format string to define the format of node n1",
     "n2": "Markdown format string to define the format of node n2",
     ...
@@ -85,7 +47,7 @@ JSON
 ```
 - [x] Use dropdown control to select one item, the diagram layout defination or one node to edit.
 - [x] Double click one node to select it in the source editor.
-- [x] Syntax highlight for YAML(diagram layout defination) and Markdown(node defination).
+- [x] Syntax highlight for Markdown(node defination).
 
 # HOWTO
 
