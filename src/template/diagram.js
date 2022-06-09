@@ -118,22 +118,16 @@ window.onload = function () {
   var right = document.getElementById('dst');
   var container = document.getElementById('content');
   resize.onmousedown = function (e) {
-    // 记录鼠标按下时的x轴坐标
     var preX = e.clientX;
     resize.left = resize.offsetLeft;
     document.onmousemove = function (e) {
       var curX = e.clientX;
       var deltaX = curX - preX;
       var leftWidth = resize.left + deltaX;
-      // 左边区域的最小宽度限制为64px
       if (leftWidth < 64) leftWidth = 64;
-      // 右边区域最小宽度限制为64px
       if (leftWidth > container.clientWidth - 64) leftWidth = container.clientWidth  - 64;
-      // 设置左边区域的宽度
       left.style.width = leftWidth + 'px';
-      // 设备分栏竖条的left位置
       resize.style.left = leftWidth;
-      // 设置右边区域的宽度
       right.style.width = (container.clientWidth - leftWidth - 4) + 'px';
     };
     //eslint-disable-next-line
@@ -151,7 +145,6 @@ window.onload = function () {
     mode: 'yaml',
     lineNumbers: true
   });
-  //setOption("mode", mode); to switch markdown and yaml
 
   var timer;
 
@@ -165,7 +158,6 @@ window.onload = function () {
 
   //it will be updated automatically. by the timer.
   var canvas = document.getElementById('canvas');
-  //console.log(canvas);
 
   jsPlumbBrowserUI.ready(function () {
     window.j = jsPlumbBrowserUI.newInstance({
