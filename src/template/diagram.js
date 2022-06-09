@@ -30,7 +30,9 @@ function node_moved() {
 
 
 function update_permlink() {
-  permalink.href = '#diag=' + m.build_permlink();
+  var data =  m.build_permlink();
+  permalink.href = '#diag=' + data;
+  window.localStorage.setItem('diagram', data);
 }
 
 function update_dropdown() {
@@ -104,7 +106,12 @@ function open_document() {
   if (location.hash && location.hash.toString().slice(0, 6) === '#diag=') {
     m.init_from_permlink(location.hash.slice(6));
   } else {
-    m.update_document('diagram', 'yaml', default_text);
+    let d = window.localStorage.getItem('diagram');
+    if (d) {
+      m.init_from_permlink(d);
+    } else {
+      m.update_document('diagram', 'yaml', default_text);
+    }
   }
   m.set_active_document('diagram');
   source.setValue(m.get_document_content('diagram'));

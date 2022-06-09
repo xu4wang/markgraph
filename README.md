@@ -73,7 +73,7 @@ JSON
 
 # Features
 
-[x]  Use permlink to share editable diagram. URL parameter format:  ```diag=.... ``` while the value is a serialized json object with below format:
+- [x]  Use permlink to share editable diagram. URL parameter format:  ```diag=.... ``` while the value is a serialized json object with below format:
 
 ```json
 {
@@ -83,9 +83,9 @@ JSON
     ...
 }
 ```
-[x] Use dropdown control to select one item, the diagram layout defination or one node to edit.
-[x] Double click one node to select it in the source editor.
-[x] Syntax highlight for YAML(diagram layout defination) and Markdown(node defination).
+- [x] Use dropdown control to select one item, the diagram layout defination or one node to edit.
+- [x] Double click one node to select it in the source editor.
+- [x] Syntax highlight for YAML(diagram layout defination) and Markdown(node defination).
 
 # HOWTO
 
