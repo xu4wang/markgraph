@@ -102,17 +102,23 @@ function document_changed() {
   //update_permlink();
 }
 
+function open_local_file(diag_name) {
+  let d = window.localStorage.getItem(diag_name);
+  if (d) {
+    m.init_from_permlink(d);
+  } else {
+    m.update_document('diagram', 'yaml', default_text);
+  }
+}
+
 function open_document() {
   if (location.hash && location.hash.toString().slice(0, 6) === '#diag=') {
-    m.init_from_permlink(location.hash.slice(6));
+    if (!m.init_from_permlink(location.hash.slice(6))) {
+      open_local_file(diag_name);
+    }
   } else {
     diag_name += location.hash;
-    let d = window.localStorage.getItem(diag_name);
-    if (d) {
-      m.init_from_permlink(d);
-    } else {
-      m.update_document('diagram', 'yaml', default_text);
-    }
+    open_local_file(diag_name);
   }
   m.set_active_document('diagram');
   source.setValue(m.get_document_content('diagram'));

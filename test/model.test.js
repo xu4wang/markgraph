@@ -320,3 +320,10 @@ edges:
     expect(m.get_edges()[0]['from']).toBe('n1');
     //console.log(m.get_documents());
 });
+
+it('error permlink data', () => {
+    var b64 = 'wrong data';
+    var d = m.init_from_permlink(b64);
+    //d = m.get_node_names();
+    expect(d).toBe(false);
+});

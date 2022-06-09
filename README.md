@@ -116,3 +116,17 @@ npx jest --no-cache --verbose
 ```
 npm run build
 ```
+
+## Deploy
+
+The deployment is easy, just build it and put all the generated files under /dist into your web server and it's done.
+
+If you are in a hurry, you can get a pre-built version below: 
+
+https://github.com/xu4wang/xu4wang.github.io/tree/master/diagram
+
+Also, you can always use my deployed version.
+
+https://awis.me/diagram
+
+

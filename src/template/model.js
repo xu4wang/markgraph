@@ -91,23 +91,31 @@ function get_active_document() {
 function init_from_permlink(b64) {
   //init from b64 data
   window.diagram_documents = {};
-
-  var obj_str = base64.decode(b64);
-  var obj = JSON.parse(obj_str);
-  /*
-  diagram: ...
-  n1:...
-  n2:...
-  */
-  for (let n in obj) {
-    if (obj.hasOwnProperty(n)) {
-      if (n === 'diagram') {
-        update_document(n, 'yaml', obj[n]);
-      } else {
-        update_document(n, 'markdown', obj[n]);
+  try {
+    var obj_str = base64.decode(b64);
+    var obj = JSON.parse(obj_str);
+    /*
+    diagram: ...
+    n1:...
+    n2:...
+    */
+    if (obj) {
+      for (let n in obj) {
+        if (obj.hasOwnProperty(n)) {
+          if (n === 'diagram') {
+            update_document(n, 'yaml', obj[n]);
+          } else {
+            update_document(n, 'markdown', obj[n]);
+          }
+        }
       }
+    } else {
+      return false;
     }
+  } catch (error) {
+    return false;
   }
+  return true;
 }
 
 function build_permlink() {
