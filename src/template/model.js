@@ -54,6 +54,16 @@ function update_document(name, content) {
     content: content
   };
 
+  if (!h.style) {
+    h['style'] = {};
+  }
+  if (!h.nodes) {
+    h['nodes'] = [];
+  }
+  if (!h.edges) {
+    h['edges'] = [];
+  }
+
   try {    //store a JSON version in .json for the frontmatter
     delete h.__content;
     result[name].error = false;
@@ -141,7 +151,7 @@ function build_permlink() {
 
 function get_document_obj(id) {
   if (!window.diagram_documents.documents[id]) {
-    return {};
+    update_document(id, '');
   }
   return window.diagram_documents.documents[id].json;
 }
@@ -149,18 +159,18 @@ function get_document_obj(id) {
 function update_attr(id, key, value) {
   //update JSON object first,
   //update yaml accordingly
-  var obj = get_document_obj(id);
+  var obj = get_document_obj(id)['style'];
   obj[key] = value;
 }
 
 function get_attr(id, key) {
   //read node attr, if not available return the default attr value
-  var obj = get_document_obj(id);
+  var obj = get_document_obj(id)['style'];
   return obj[key];
 }
 
 function get_attrs(id) {
-  return get_document_obj(id);
+  return get_document_obj(id)['style'];
 }
 
 function get_edges(doc) {

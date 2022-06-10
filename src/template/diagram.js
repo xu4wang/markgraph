@@ -9,7 +9,8 @@ var node = require('./node');
 require('codemirror/mode/yaml/yaml.js');
 require('codemirror/mode/markdown/markdown.js');
 
-var source, permalink, default_text, dropdown, diag_name = 'diagram';
+var source, permalink, default_text, dropdown, diag_name = '#default_diagram';
+var frontpage = 'index';
 
 //retrieve the top/left parameters of each node, rebuild yaml
 function node_moved() {
@@ -20,6 +21,7 @@ function node_moved() {
     let e = document.getElementById(name);
     m.update_attr(name, 'left', e.style.left);
     m.update_attr(name, 'top', e.style.top);
+    source.setValue(m.get_document_content(name));
   } else {
     for (let n of nodes) {
       let e = document.getElementById(n);
@@ -27,7 +29,6 @@ function node_moved() {
       m.update_attr(n, 'top', e.style.top);
     }
   }
-  source.setValue(m.get_document_content(m.get_active_document()));
 }
 
 
@@ -91,26 +92,37 @@ function document_changed() {
   update_view();
 }
 
-function open_local_file(diag_name) {
-  let d = window.localStorage.getItem(diag_name);
+function open_local_file(name) {
+  let d = window.localStorage.getItem(name);
   if (d) {
     m.init_from_permlink(d);
   } else {
-    m.update_document('diagram', default_text);
+    //diag_name = 'diagram';  //use default diag_name, it's already initialized.
+    m.update_document(frontpage, default_text);
   }
 }
 
 function open_document() {
   if (location.hash && location.hash.toString().slice(0, 6) === '#diag=') {
+    //if there is data, try to load data first.
     if (!m.init_from_permlink(location.hash.slice(6))) {
+      //load data failed, try to open local Storage with default key
+      diag_name = location.hash.toString().slice(0, 40);
       open_local_file(diag_name);
     }
+    //use default key for local storage
+    window.location.hash = diag_name;
   } else {
-    diag_name += location.hash;
+    //diag_name += '.';
+    diag_name = location.hash.toString().slice(0, 40);
+    if (diag_name === '') {
+      diag_name = '#default_diagram';
+    }
     open_local_file(diag_name);
+    window.location.hash = diag_name;
   }
-  m.set_active_document('diagram');
-  source.setValue(m.get_document_content('diagram'));
+  m.set_active_document(frontpage);
+  source.setValue(m.get_document_content(frontpage));
   update_view();
   update_dropdown();
 }

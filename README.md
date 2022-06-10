@@ -34,7 +34,7 @@ Generating diagram from yaml/markdown.
 JSON
 ```
 
-# Features
+# TODO
 
 - [x]  Use permlink to share editable diagram. URL parameter format:  ```diag=.... ``` while the value is a serialized json object with below format:
 
@@ -48,6 +48,7 @@ JSON
 - [x] Use dropdown control to select one item, the diagram layout defination or one node to edit.
 - [x] Double click one node to select it in the source editor.
 - [x] Syntax highlight for Markdown(node defination).
+- [ ] Add another dropdown on right to select diagram, can list only diagrams (with nodes attrs)
 
 # HOWTO
 
