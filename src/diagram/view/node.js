@@ -94,7 +94,7 @@ function add_node(model, name) {
       add_only_node(n, model.get_attrs(n), model.get_document_body(n));
       //add_node(model, n);
     }
-    edge.add_edges(model.get_edges(name));
+    edge.add_edges(model.get_edges(name));  //add edges here sine edges are part of node.
   }
 }
 
