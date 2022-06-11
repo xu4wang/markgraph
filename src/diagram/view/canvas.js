@@ -1,6 +1,8 @@
 'use strict';
 
 var m = require('../model/model');
+var node = require('./node');
+
 
 //retrieve the top/left parameters of each node, rebuild yaml
 function node_moved() {
@@ -59,5 +61,13 @@ function init() {
     });
   });
 }
+
+
+m.on('ACTIVE-DOCUMENT', ({ active }) => {
+  if (window.j) {
+    window.j.reset();
+    node.add_node(m, active);
+  }
+});
 
 exports.init = init;

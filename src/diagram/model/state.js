@@ -12,7 +12,7 @@ function emit(eventName, payload) {
   }
   //there is no event subscribed
   if (!events.hasOwnProperty(eventName)) {
-    console.error(`Event "${eventName}" does not exists`);
+    //console.error(`Event "${eventName}" does not exists`);
 
     store = Object.assign({}, store, payload);
     return false;  //we can still EMIT

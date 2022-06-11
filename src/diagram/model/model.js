@@ -58,7 +58,7 @@ function _update_document(result, name, content) {
   if (h.name) {
     delete result[name];
     //notify listener that a file was delete
-    store.emit('DOCUMENT-DELETE', () => {});
+    store.emit('DOCUMENT-DELETE', {});
     name = h.name;
   }
 
@@ -92,7 +92,7 @@ function _update_document(result, name, content) {
   }
 
   if (new_file_created) {
-    store.emit('DOCUMENT-CREATE', () => {});
+    store.emit('DOCUMENT-CREATE', {});
   }
   return result;
 }
@@ -235,6 +235,14 @@ function get_edges(doc) {
   return [];
 }
 
+function get_note(name) {
+  var docs = store.get_store().documents;
+  if (docs[name]) {
+    return docs[name].json.note;
+  }
+  return '';
+}
+
 function get_all_names() {
   var docs = store.get_store().documents;
   var ret = new Set();
@@ -246,7 +254,11 @@ function get_all_names() {
       }
     }
   }
-  return ret;
+  var ret2 = {};
+  for (let k of ret) {
+    ret2[k] = get_note(k) || '';
+  }
+  return ret2;
 }
 
 function reset() {

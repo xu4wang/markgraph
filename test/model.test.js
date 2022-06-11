@@ -7,6 +7,7 @@ global.TextDecoder = TextDecoder
 var m = require('../src/diagram/model/model.js');
 
 const { JSDOM } = require('jsdom');
+const { toNamespacedPath } = require('path');
 
 const jsDomIntance = new JSDOM(`
   <!DOCTYPE html>
@@ -237,13 +238,15 @@ edges:
     -   from: n3
         to: n1
 ---`;
+    m.reset();
+    m.reset_listener();
+
     m.update_document('hello', dat);
     var d = m.get_documents();
     expect(d['hello']['error']).toBe(false);
-    d = m.get_all_names();
-    expect(d).toContain('n1');
-    expect(d).toContain('n4');
-    expect(d).toContain('hello');
+    var names;
+    names = m.get_all_names();
+    expect(Object.keys(names).length).toBe(5);
 });
 
 it('document name change ', () => {
@@ -341,9 +344,8 @@ it('document delete listener ', () => {
     m.reset();
     m.reset_listener();
     m.on("DOCUMENT-DELETE", ({ documents }) => {
-        expect(documents.hello1.content).toBe('');
-        expect(documents.world.json.name).toBe('world');
-
+        expect(m.get_document_content('hello1')).toBe('');
+        //expect(documents.world.json.name).toBe('world');
     });
     var dat =`---
 age: 127
@@ -363,6 +365,8 @@ name: world
 contact:
     email: email@domain.com
     address: some location
+style:
+   kkk: 1
 pets:
     - cat
     - dog
@@ -370,4 +374,5 @@ pets:
 ---
 Some Other content`;
     m.update_document('hello1', dat);
+    expect(m.get_attr('world','kkk')).toBe(1);
 });
