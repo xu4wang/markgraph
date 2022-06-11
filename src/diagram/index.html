@@ -9,10 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
  
     <link rel="stylesheet" href="codemirror.css">
+    <link rel="stylesheet" href="clusterize.css">
 
     <link rel="stylesheet" href="jsplumbtoolkit.css">
     <link rel="stylesheet" href="jsplumbtoolkit-demo.css">
     <link rel="stylesheet" href="diagram.css">
+    <link rel="stylesheet" href="toggle-switchy.css">
+
+
 
   </head>
   <body>
@@ -21,33 +25,75 @@
     <div class="header">
       <h1>Diagram Builder</h1>
     </div>
-    <h4 class="subheader">
-    <a href="#" id="permalink">permalink</a> Edit Source:
+    <p class="subheader">
+    <a href="#" id="permalink">permalink</a>
+    <label class="toggle-switchy" for="explorer" data-size="xs" data-style="rounded" data-label="left">
+      <input checked type="checkbox" id="explorer">
+      <span class="toggle">
+        <span class="switch"></span>	
+      </span>
+      <span class="label">Node Explorer</span>
+    </label>
+    <label class="toggle-switchy" for="editor" data-size="xs" data-style="rounded" data-label="left">
+      <input checked type="checkbox" id="editor">
+      <span class="toggle">
+        <span class="switch"></span>	
+      </span>
+      <span class="label">Editor</span>
+    </label>
     <select name="dropdown" id="dropdown">
     </select>
-  </h4>
+  </p>
     <div id="content">
-      <div id="src">
-        <textarea id="source">---
-nodes:
-  - n1
-  - n2
-  - n3
-edges:
-  - from: n1
-    to: n2
-    label: 2️⃣
-    paintStyle:
-      strokeWidth: 1
-      stroke: red
-  - from: n2
-    to: n3
-    label: create
-  - from: n3
-    to: n1
----
-        </textarea>
+      <div id="left">
+        <div id="explorer_container">
+          <div id="search_box">
+            <input type="text" id="search" placeholder="filter by name/note"/>
+          </div>
+          <div class="clusterize">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+            </table>
+            <div id="scrollArea" class="clusterize-scroll">
+              <table>
+                <tbody id="contentArea" class="clusterize-content">
+                  <tr class="clusterize-no-data">
+                    <td>Loading data…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div> 
+          </div>
+          </div>
+        <div id="lresize"></div>
+        <div id="src">
+          <textarea id="source">---
+  nodes:
+    - n1
+    - n2
+    - n3
+  edges:
+    - from: n1
+      to: n2
+      label: 2️⃣
+      paintStyle:
+        strokeWidth: 1
+        stroke: red
+    - from: n2
+      to: n3
+      label: create
+    - from: n3
+      to: n1
+  ---
+          </textarea>
+        </div>
       </div>
+
       <div id="resize">
       </div>
       <div class="jtk-demo-main" id="dst">
@@ -63,6 +109,7 @@ edges:
     <script src="jsplumb.connector-bezier.umd.js"></script>
     <script src="jsplumb.connector-flowchart.umd.js"></script>
     <script src="jsplumb.browser-ui.umd.js"></script>
+    <script src="clusterize.js"></script>
     <script src="diagram.js"></script>
 
   </body>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Toggle Switchy - A pure CSS toggle switch for form input checkboxes</title>
+		<meta name="author" content="Toggle Switchy">
+		<meta name="description" content="A pure CSS toggle switch for form input checkboxes">
+		<!-- <link href="/favicon.ico" rel="shortcut icon"> -->
+		<!-- <link href="/favicon.png" rel="apple-touch-icon-precomposed"> -->
+
+		<!-- styles -->
+		<link rel="stylesheet" media="screen" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" media="screen" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css">
+		<link rel="stylesheet" media="screen" href="https://cdn.jsdelivr.net/gh/adamculpepper/toggle-switchy@latest/toggle-switchy.css">
+		<link rel="stylesheet" media="screen" href="https://cdn.jsdelivr.net/gh/adamculpepper/toggle-switchy@latest/docs/assets/css/custom.css">
+
+		<!-- open graph meta -->
+		<meta property="og:title" content="Toggle Switchy">
+		<meta property="og:site_name" content="Toggle Switchy">
+		<meta property="og:description" content="A pure CSS toggle switch for form input checkboxes">
+		<meta property="og:url" content="https://adamculpepper.github.io/toggle-switchy">
+		<meta property="og:image" content="http://adamculpepper.net/repos/preview-toggle-switchy.png">
+		<meta name="twitter:image" content="http://adamculpepper.net/repos/preview-toggle-switchy.png">
+	</head>
+	<body>
+
+		<header>
+			<div class="container">
+				<div class="row">
+					<div class="col-12 py-5">
+						<div class="row">
+							<div class="col-lg-9">
+								<h1>Toggle Switchy<span class="h5 ml-2">v1.14</span></h1>
+								<h2 class="h4">A pure CSS toggle switch for form input checkboxes</h2>
+							</div>
+							<div class="col-lg-3 d-block d-lg-flex align-items-center mt-4 mt-lg-0">
+								<div class="d-inline-block text-center ml-auto">
+									<a class="btn btn-primary ml-auto d-block btn-lg" href="https://github.com/adamculpepper/toggle-switchy"><i class="fab fa-github mr-1"></i> Edit on Github</a>
+									Docs in README
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div id="content" class="container mt-5">
+			<div class="row">
+				<div class="col-lg-6">
+
+					<div class="row mb-5">
+						<div class="col-12">
+							<h3>Default</h3>
+						</div>
+						<div class="col-12">
+							<label class="toggle-switchy" for="example_default_1" data-size="xl">
+								<input checked type="checkbox" id="example_default_1">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_default_2" data-size="lg">
+								<input checked type="checkbox" id="example_default_2">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_default_3" data-size="">
+								<input checked type="checkbox" id="example_default_3">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_default_4" data-size="sm">
+								<input checked type="checkbox" id="example_default_4">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_default_5" data-size="xs">
+								<input checked type="checkbox" id="example_default_5">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="row mb-5">
+						<div class="col-12">
+							<h3>Rounded</h3>
+						</div>
+						<div class="col-12">
+							<label class="toggle-switchy" for="example_rounded_1" data-size="xl" data-style="rounded">
+								<input checked type="checkbox" id="example_rounded_1">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_rounded_2" data-size="lg" data-style="rounded">
+								<input checked type="checkbox" id="example_rounded_2">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_rounded_3" data-size="" data-style="rounded">
+								<input checked type="checkbox" id="example_rounded_3">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_rounded_4" data-size="sm" data-style="rounded">
+								<input checked type="checkbox" id="example_rounded_4">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_rounded_5" data-size="xs" data-style="rounded">
+								<input checked type="checkbox" id="example_rounded_5">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="row mb-5">
+						<div class="col-12">
+							<h3>Square</h3>
+						</div>
+						<div class="col-12">
+							<label class="toggle-switchy" for="example_square_1" data-size="xl" data-style="square">
+								<input checked type="checkbox" id="example_square_1">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_square_2" data-size="lg" data-style="square">
+								<input checked type="checkbox" id="example_square_2">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_square_3" data-size="" data-style="square">
+								<input checked type="checkbox" id="example_square_3">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_square_4" data-size="sm" data-style="square">
+								<input checked type="checkbox" id="example_square_4">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_square_5" data-size="xs" data-style="square">
+								<input checked type="checkbox" id="example_square_5">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="row mb-5">
+						<div class="col-12">
+							<h3>No Text</h3>
+						</div>
+						<div class="col-12">
+							<label class="toggle-switchy" for="example_textless_1" data-size="xl" data-text="false" data-style="rounded">
+								<input checked type="checkbox" id="example_textless_1">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_textless_2" data-size="lg" data-text="false" data-style="rounded">
+								<input checked type="checkbox" id="example_textless_2">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_textless_3" data-size="" data-text="false" data-style="rounded">
+								<input checked type="checkbox" id="example_textless_3">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_textless_4" data-size="sm" data-text="false" data-style="rounded">
+								<input checked type="checkbox" id="example_textless_4">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_textless_5" data-size="xs" data-text="false" data-style="rounded">
+								<input checked type="checkbox" id="example_textless_5">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+						</div>
+					</div>
+
+				</div>
+				<div class="col-lg-6">
+
+					<div class="row mb-5">
+						<div class="col-12">
+							<h3>Disabled</h3>
+						</div>
+						<div class="col-12">
+							<label class="toggle-switchy" for="example_disabled_1" data-size="xl" data-text="false" data-style="rounded">
+								<input disabled checked type="checkbox" id="example_disabled_1">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_disabled_2" data-size="lg" data-text="false" data-style="rounded">
+								<input disabled checked type="checkbox" id="example_disabled_2">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_disabled_3" data-size="" data-text="false" data-style="rounded">
+								<input disabled checked type="checkbox" id="example_disabled_3">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_disabled_4" data-size="sm" data-text="false" data-style="rounded">
+								<input disabled checked type="checkbox" id="example_disabled_4">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_disabled_5" data-size="xs" data-text="false" data-style="rounded">
+								<input disabled checked type="checkbox" id="example_disabled_5">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="row mb-5">
+						<div class="col-12">
+							<h3>Colors</h3>
+						</div>
+						<div class="col-12">
+							<label class="toggle-switchy" for="example_colors_1" data-size="sm" data-style="rounded" data-color="red">
+								<input checked type="checkbox" id="example_colors_1">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_colors_2" data-size="sm" data-style="rounded" data-color="orange">
+								<input checked type="checkbox" id="example_colors_2">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_colors_3" data-size="sm" data-style="rounded" data-color="yellow">
+								<input checked type="checkbox" id="example_colors_3">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_colors_4" data-size="sm" data-style="rounded" data-color="green">
+								<input checked type="checkbox" id="example_colors_4">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_colors_5" data-size="sm" data-style="rounded" data-color="blue">
+								<input checked type="checkbox" id="example_colors_5">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_colors_6" data-size="sm" data-style="rounded" data-color="purple">
+								<input checked type="checkbox" id="example_colors_6">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+							<label class="toggle-switchy" for="example_colors_7" data-size="sm" data-style="rounded" data-color="gray">
+								<input checked type="checkbox" id="example_colors_7">
+								<span class="toggle">
+									<span class="switch"></span>
+								</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="row mb-5">
+						<div class="col-12">
+							<h3>Labels</h3>
+						</div>
+						<div class="col-12">
+							<label class="toggle-switchy" for="example_30" data-size="sm" data-style="rounded">
+								<input checked type="checkbox" id="example_30">
+								<span class="toggle">
+									<span class="switch"></span>	
+								</span>
+								<span class="label">Label on right</span>
+							</label>
+						</div>
+						<div class="col-12 mt-3">
+							<label class="toggle-switchy" for="example_31" data-size="sm" data-style="rounded" data-label="left">
+								<input checked type="checkbox" id="example_31">
+								<span class="toggle">
+									<span class="switch"></span>	
+								</span>
+								<span class="label">Label on left</span>
+							</label>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<footer>
+			<div class="container">
+				<div class="d-lg-flex py-3">
+					<div class="d-block d-md-inline-block mb-3 mb-md-0">
+						<a href="/">Toggle Switchy</a>
+					</div>
+					<span class="ml-2 hidden-sm-down">is</span>
+					<span class="ml-2"><i class="fas fa-code"></i><span class="sr-only">built</span></span>
+					<span class="ml-2">with</span>
+					<span class="ml-2"><i class="fas fa-heart"></i><span class="sr-only">love</span></span>
+					<span class="ml-2">by</span>
+					<a class="ml-1" target="_blank" rel="referrer nofollow" href="http://adamculpepper.net"><img class="rounded-circle" src="https://cdn.louisianagroups.com/assets/img/adam.jpg" alt="Contributor"></a>
+					<div class="d-block d-lg-inline-block mt-3 mt-lg-0 ml-auto">
+						<a target="_blank" href="https://github.com/adamculpepper/toggle-switchy">edit this page<i class="fab fa-github ml-2"></i></a>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+		<script async src="https://googletagmanager.com/gtag/js?id=UA-450952-13"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'UA-450952-13');
+		</script>
+
+	</body>
+</html>

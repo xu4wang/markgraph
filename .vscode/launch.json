@@ -6,7 +6,7 @@
         "request": "launch",
         "name": "Jest single run all tests",
         "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
-        "args": ["--verbose", "-i", "--no-cache"],
+        "args": ["--verbose", "-i", "--no-cache","state.test.js" ],
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen"
       }

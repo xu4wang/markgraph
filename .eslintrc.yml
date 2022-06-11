@@ -6,10 +6,11 @@ env:
 globals:
   Uint8Array: false
   jsPlumbBrowserUI: readonly
+  Clusterize: readonly
 
 ignorePatterns:
   - dist/
-  - jsplumb/
+  - library/
   - test/
   - node_modules
   - rollup.config.js

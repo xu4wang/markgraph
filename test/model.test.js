@@ -4,7 +4,7 @@ const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder
 global.TextDecoder = TextDecoder
 
-var m = require('../src/template/model.js');
+var m = require('../src/diagram/model/model.js');
 
 const { JSDOM } = require('jsdom');
 
@@ -30,7 +30,6 @@ it('document can be saved and read ', () => {
     expect(d['hello']['content']).toBe('hello data');
     expect(d['hello']['json']['style']).toEqual({});
     dat =`---
-name: Derek Worthen
 age: 127
 contact:
     email: email@domain.com
@@ -245,4 +244,130 @@ edges:
     expect(d).toContain('n1');
     expect(d).toContain('n4');
     expect(d).toContain('hello');
+});
+
+it('document name change ', () => {
+    var dat ='hello data';
+    m.update_document('hello', dat);
+    expect(m.get_document_body('hello')).toBe('hello data');
+    dat =`---
+name: world
+---
+Some Other content`;
+    m.update_document('hello', dat);
+    expect(m.get_document_body('world')).toBe('\nSome Other content');
+    //check hello is not available.
+    expect(m.get_document_body('hello')).toBe('');
+});
+
+it('style inherit ', () => {
+    var dat =`---
+style :
+    attr1 : value1
+    attr2 : value2
+---
+hello`;
+    m.update_document('parent', dat);
+    expect(m.get_attr('parent','attr1')).toBe('value1');    
+    expect(m.get_attr('parent','attr2')).toBe('value2');    
+    dat =`---
+follow :
+    - parent
+style :
+    attr1 : child_value1
+---
+hello`;
+    m.update_document('child', dat);
+    expect(m.get_attr('child','attr1')).toBe('child_value1');    
+    expect(m.get_attr('child','attr2')).toBe('value2');   
+    dat =`---
+follow :
+    - child
+style :
+    attr3 : grand_child_value3
+---
+hello`;
+    m.update_document('grand_child', dat);
+    expect(m.get_attr('grand_child','attr1')).toBe('child_value1');    
+    expect(m.get_attr('grand_child','attr2')).toBe('value2');   
+    expect(m.get_attr('grand_child','attr3')).toBe('grand_child_value3');   
+});
+
+it('active document change listener ', () => {
+    m.on("ACTIVE-DOCUMENT", ({ active }) => {
+        expect(active).toBe('Hello World');
+    });
+    m.set_active_document('Hello World');
+});
+
+it('document change listener ', () => {
+    m.on("DOCUMENT-UPDATE", ({ documents }) => {
+        expect(documents.hello.json.age).toBe(127);
+    });
+    var dat =`---
+age: 127
+contact:
+    email: email@domain.com
+    address: some location
+pets:
+    - cat
+    - dog
+    - bat
+---
+Some Other content`;
+    m.update_document('hello', dat);
+});
+
+it('document create listener ', () => {
+    m.reset();
+    m.on("DOCUMENT-CREATE", ({ documents }) => {
+        expect(documents.hello.json.age).toBe(127);
+    });
+    var dat =`---
+age: 127
+contact:
+    email: email@domain.com
+    address: some location
+pets:
+    - cat
+    - dog
+    - bat
+---
+Some Other content`;
+    m.update_document('hello', dat);
+});
+
+it('document delete listener ', () => {
+    m.reset();
+    m.reset_listener();
+    m.on("DOCUMENT-DELETE", ({ documents }) => {
+        expect(documents.hello1.content).toBe('');
+        expect(documents.world.json.name).toBe('world');
+
+    });
+    var dat =`---
+age: 127
+contact:
+    email: email@domain.com
+    address: some location
+pets:
+    - cat
+    - dog
+    - bat
+---
+Some Other content`;
+    m.update_document('hello1', dat);
+    dat =`---
+age: 127
+name: world
+contact:
+    email: email@domain.com
+    address: some location
+pets:
+    - cat
+    - dog
+    - bat
+---
+Some Other content`;
+    m.update_document('hello1', dat);
 });

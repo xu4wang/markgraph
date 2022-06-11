@@ -6,19 +6,48 @@ Generating diagram from yaml/markdown.
 # The Idea
 
 * A diagram is a collection of nodes and edges. 
-* A node is a diagram with only one node and no edge.  
+* A node is a diagram without sub nodes and edges.  
 * A node is defined by a markdown file.
-  *  In the front matter section: the apperence of the node: location, size and style. 
-  *  In the markdown body: the content of the node.
-* A diagram is also defined by markdown file.
   *  In the front matter section:
-     *  Default: the default attributes for all the nodes it has. 
-     *  Nodes: list of nodes in this diagram.  
-     *  Edges: direction, style, label.
-  *  In the markdown body: currently only for comment purpose.  
+     *  style: the attributes for the node, for example size, location, color, text align etc. 
+     *  nodes: list of sub nodes.  
+     *  edges: direction, style, label.
+  *  In the markdown body: the content of the node.
 * The location of one node can either be customized by modifying parameters in the markdown file, or drag & drop the generated node in the diagram. In the later case, the related paremeters, say ```top``` and ```left``` in markdown will be updated automatically.
 * The diagram can be exported in ```permlink``` address. All the information in the markdowns will be embedded in the exported URL. You can share the URL as a copy of the editable version of the diagram.
 
+```yaml
+---
+name: node1
+note: some tags or note
+follow:
+  - parent1
+  - parent2
+  - parent3
+nodes:
+  - n1
+  - n2
+  - n3
+  - n4
+edges:
+  - from: n1
+    to: n2
+    label: 2️⃣
+    paintStyle:
+      strokeWidth: 1
+      stroke: red
+  - from: n2
+    to: n3
+    label: create
+  - from: n3
+    to: n1
+style:
+  left: 626px
+  top: 293px
+---
+
+The content of node 1 in markdonw format
+```
 # Quick Start 
 
 1. modify each of the markdown file to define the content of each node
@@ -48,7 +77,10 @@ JSON
 - [x] Use dropdown control to select one item, the diagram layout defination or one node to edit.
 - [x] Double click one node to select it in the source editor.
 - [x] Syntax highlight for Markdown(node defination).
-- [ ] Add another dropdown on right to select diagram, can list only diagrams (with nodes attrs)
+- [ ] node can inherit style from other nodes, using the follow parameter.
+- [ ] add name and note field to support search and rename.
+- [ ] add shortcut or button to delete a node.
+- [ ] adjust layout:  node browser + canvas + source editor
 
 # HOWTO
 

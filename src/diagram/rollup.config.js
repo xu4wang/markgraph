@@ -5,7 +5,7 @@ import json from '@rollup/plugin-json';
 
 export default [
   {
-    input: 'src/template/diagram.js',
+    input: 'src/diagram/diagram.js',
     output: { file: 'dist/diagram.js', format: 'iife', name: 'diagram' },
     plugins: [
       json(),

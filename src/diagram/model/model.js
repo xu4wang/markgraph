@@ -2,6 +2,12 @@
 
 var jsyaml     = require('js-yaml');
 var base64     = require('./base64');
+var store      = require('./state');
+
+store.init({
+  active: null,
+  documents: {}
+});
 
 function parse(text, options, loadSafe) {
   let contentKeyName = options && typeof options === 'string'
@@ -41,13 +47,25 @@ function loadFront(content, options) {
 
 function get_documents() {
   //return a list of objects { name, type, content }
-  return window.diagram_documents.documents;
+  return store.get_store().documents;
 }
 
-function update_document(name, content) {
-  var diagram_documents = window.diagram_documents || {};
-  var result = diagram_documents.documents || {};
+function _update_document(result, name, content) {
+  //TODO need to check 'follow' attributes, prevent loop inherit
   var h = loadFront(content);
+  var new_file_created = false;
+
+  if (h.name) {
+    delete result[name];
+    //notify listener that a file was delete
+    store.emit('DOCUMENT-DELETE', () => {});
+    name = h.name;
+  }
+
+  if (!result[name]) {
+    //notify listener that a file was created
+    new_file_created = true;
+  }
 
   result[name] = {
     body: h.__content,
@@ -73,51 +91,65 @@ function update_document(name, content) {
     result[name].json = err.message || String(err);
   }
 
-  diagram_documents.documents = result;
-  window.diagram_documents = diagram_documents;
+  if (new_file_created) {
+    store.emit('DOCUMENT-CREATE', () => {});
+  }
+  return result;
 }
 
+//  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
+function update_document(name, content) {
+  store.emit('DOCUMENT-UPDATE', ({ documents }) => (_update_document(documents, name, content)));
+}
+
+
 function get_subnode_names(id) {
-  var diagram_documents = window.diagram_documents || {};
-  if (diagram_documents.documents[id]) {
-    if (diagram_documents.documents[id].json.nodes) {
-      return diagram_documents.documents[id].json.nodes;
+  var diagram_documents = store.get_store().documents;
+  if (diagram_documents[id]) {
+    if (diagram_documents[id].json.nodes) {
+      return diagram_documents[id].json.nodes;
     }
   }
   return [];
 }
 
 function get_document_content(id) {
-  if (window.diagram_documents.documents[id]) {
+  var diagram_documents = store.get_store().documents;
+  if (diagram_documents[id]) {
     var ret = '';
-    if (Object.keys(window.diagram_documents.documents[id].json).length !== 0) {
-      ret = '---\n' + jsyaml.dump(window.diagram_documents.documents[id].json) + '---';
+    if (Object.keys(diagram_documents[id].json).length !== 0) {
+      ret = '---\n' + jsyaml.dump(diagram_documents[id].json) + '---';
     }
-    return ret + window.diagram_documents.documents[id].body;
+    return ret + diagram_documents[id].body;
   }
   return '';
 }
 
 function get_document_body(id) {
-  if (window.diagram_documents.documents[id]) {
-    return window.diagram_documents.documents[id].body;
+  var diagram_documents = store.get_store().documents;
+
+  if (diagram_documents[id]) {
+    return diagram_documents[id].body;
   }
   return '';
 }
 
 function set_active_document(name) {
-  window.diagram_documents = window.diagram_documents || {};
-  window.diagram_documents.active = name;
+  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
 }
 
 function get_active_document() {
-  window.diagram_documents = window.diagram_documents || {};
-  return window.diagram_documents.active;
+  return store.get_store().active;
 }
 
 function init_from_permlink(b64) {
   //init from b64 data
-  window.diagram_documents = {};
+  //reset store
+  store.emit('RESET', () => ({
+    active: null,
+    documents: {}
+  }));
+
   try {
     var obj_str = base64.decode(b64);
     var obj = JSON.parse(obj_str);
@@ -139,7 +171,7 @@ function init_from_permlink(b64) {
 function build_permlink() {
   //generate b64 data
   var obj = {};
-  var documents = window.diagram_documents.documents;
+  var documents = store.get_store().documents;
   for (const el in documents) {
     if (documents.hasOwnProperty(el)) {
       obj[el] = get_document_content(el);
@@ -150,10 +182,11 @@ function build_permlink() {
 }
 
 function get_document_obj(id) {
-  if (!window.diagram_documents.documents[id]) {
+  var documents = store.get_store().documents;
+  if (!documents[id]) {
     update_document(id, '');
   }
-  return window.diagram_documents.documents[id].json;
+  return documents[id].json;
 }
 
 function update_attr(id, key, value) {
@@ -166,22 +199,44 @@ function update_attr(id, key, value) {
 function get_attr(id, key) {
   //read node attr, if not available return the default attr value
   var obj = get_document_obj(id)['style'];
-  return obj[key];
+  var parent = get_document_obj(id)['follow'];
+
+  var r = obj[key];
+  if (r) return r;
+
+  if (parent) {
+    for (let f of parent) {
+      let r = get_attr(f, key);
+      if (r) return r;
+    }
+  }
+  return r;
 }
 
 function get_attrs(id) {
-  return get_document_obj(id)['style'];
+  var obj = get_document_obj(id)['style'];
+  var parent = get_document_obj(id)['follow'];
+
+  if (parent) {
+    for (let f of parent) {
+      let r = get_attrs(f);
+      obj = Object.assign({}, r, obj);
+    }
+  }
+  return obj;
 }
 
 function get_edges(doc) {
-  if (window.diagram_documents.documents[doc].json.edges) {
-    return window.diagram_documents.documents[doc].json.edges;
+  var documents = store.get_store().documents;
+
+  if (documents[doc].json.edges) {
+    return documents[doc].json.edges;
   }
   return [];
 }
 
 function get_all_names() {
-  var docs = window.diagram_documents.documents || {};
+  var docs = store.get_store().documents;
   var ret = new Set();
   for (let d in docs) {
     if (docs.hasOwnProperty(d)) {
@@ -194,6 +249,14 @@ function get_all_names() {
   return ret;
 }
 
+function reset() {
+  store.emit('RESET', () => ({
+    active: null,
+    documents: {}
+  }));
+}
+
+exports.reset = reset;
 exports.init_from_permlink = init_from_permlink;
 exports.build_permlink = build_permlink;
 
@@ -213,3 +276,13 @@ exports.update_attr = update_attr;
 exports.get_attrs = get_attrs;
 
 exports.get_all_names = get_all_names;
+exports.on = store.on;
+exports.reset_listener = store.reset_listener;
+
+/* support EVENTS
+'ACTIVE-DOCUMENT'
+'DOCUMENT-UPDATE'
+"DOCUMENT-DELETE"
+"DOCUMENT-CREATE"
+'RESET'
+*****************/

@@ -3,14 +3,78 @@
 //const { default: nodeResolve } = require('@rollup/plugin-node-resolve');
 /* eslint-env browser */
 var codemirror = require('codemirror');
-var m = require('./model');
-var node = require('./node');
+var m = require('./model/model');
+var node = require('./view/node');
 
 require('codemirror/mode/yaml/yaml.js');
 require('codemirror/mode/markdown/markdown.js');
 
 var source, permalink, default_text, dropdown, diag_name = '#default_diagram';
 var frontpage = 'index';
+var rows = [], search = document.getElementById('search');
+var left_pannel, explorer_container, src, dst;
+
+/* Fill array with data
+ * Fields:
+ * values *array* - value of each field (in case use of table)
+ * markup *string* - markup that will be added to the DOM
+ * active *bool* - specifies if row is suitable by search phrase
+*/
+for (var i = 1; i <= 500; i++) {
+  rows.push({
+    values: [ i, i * 100 / 500 + '%' ],
+    markup: '<tr>' +
+              '<td>' + i + '</td>' +
+              '<td>' + (i * 100 / 500 + '%') + '</td>' +
+            '</tr>',
+    active: true
+  });
+}
+
+/*
+* Fetch suitable rows
+*/
+function func_filterRows(rows) {
+  var results = [];
+  for (var i = 0, ii = rows.length; i < ii; i++) {
+    if (rows[i].active) results.push(rows[i].markup);
+  }
+  return results;
+}
+
+var filterRows = func_filterRows;
+/*
+* Init clusterize.js
+*/
+var clusterize = new Clusterize({
+  rows: filterRows(rows),
+  scrollId: 'scrollArea',
+  contentId: 'contentArea'
+});
+
+/*
+* Multi-column search
+*/
+function func_onSearch() {
+  for (var i = 0, ii = rows.length; i < ii; i++) {
+    var suitable = false;
+    for (var j = 0, jj = rows[i].values.length; j < jj; j++) {
+      if (rows[i].values[j].toString().indexOf(search.value) + 1) { suitable = true; }
+    }
+    rows[i].active = suitable;
+  }
+  clusterize.update(filterRows(rows));
+}
+
+var onSearch = func_onSearch;
+
+document.getElementById('contentArea').onclick = function (e) {
+  var target = e.target;
+  if (target.nodeName !== 'TD') return;
+  console.log(target.innerText);
+};
+
+search.oninput = onSearch;
 
 //retrieve the top/left parameters of each node, rebuild yaml
 function node_moved() {
@@ -62,6 +126,51 @@ function update_dropdown() {
     m.set_active_document(n);
   };
 }
+
+/*
+checkbox = document.getElementById('conducted');
+
+checkbox.addEventListener('change', e => {
+
+    if(e.target.checked){
+        //do something
+    }
+
+});
+*/
+
+var node_explorer = document.getElementById('explorer');
+
+node_explorer.addEventListener('change', e => {
+  if  (e.target.checked) {
+    explorer_container.style.display = 'block';
+    left_pannel.style.display = 'flex';
+  } else {
+    if (src.style.display === 'none') {
+      left_pannel.style.display = 'none';
+    }
+    explorer_container.style.display = 'none';
+    src.style.width = '100%';
+    dst.style.width = '100%';
+  }
+});
+
+var editor = document.getElementById('editor');
+
+editor.addEventListener('change', e => {
+  if  (e.target.checked) {
+    src.style.display = 'block';
+    left_pannel.style.display = 'flex';
+  } else {
+    if (explorer_container.style.display === 'none') {
+      left_pannel.style.display = 'none';
+    }
+    src.style.display = 'none';
+    explorer_container.style.width = '100%';
+    dst.style.width = '100%';
+  }
+});
+
 
 function node_selected(p) {
   //console.log(p);
@@ -129,9 +238,11 @@ function open_document() {
 
 window.onload = function () {
   var resize = document.getElementById('resize');
-  var left = document.getElementById('src');
-  var right = document.getElementById('dst');
+  var left = left_pannel = document.getElementById('left');
+  var right = dst = document.getElementById('dst');
   var container = document.getElementById('content');
+  src = document.getElementById('src');
+
   resize.onmousedown = function (e) {
     var preX = e.clientX;
     resize.left = resize.offsetLeft;
@@ -139,11 +250,37 @@ window.onload = function () {
       var curX = e.clientX;
       var deltaX = curX - preX;
       var leftWidth = resize.left + deltaX;
-      if (leftWidth < 64) leftWidth = 64;
-      if (leftWidth > container.clientWidth - 64) leftWidth = container.clientWidth  - 64;
+      if (leftWidth < 4) leftWidth = 4;
+      if (leftWidth > container.clientWidth - 4) leftWidth = container.clientWidth  - 4;
       left.style.width = leftWidth + 'px';
+      src.style.width = '100%'; //a hack to make editor width updated.
       resize.style.left = leftWidth;
       right.style.width = (container.clientWidth - leftWidth - 4) + 'px';
+    };
+    //eslint-disable-next-line
+    document.onmouseup = function (e) {
+      document.onmousemove = null;
+      document.onmouseup = null;
+    };
+  };
+
+  var lresize = document.getElementById('lresize');
+  var lleft = explorer_container = document.getElementById('explorer_container');
+  var lright = document.getElementById('src');
+  var lcontainer = document.getElementById('left');
+
+  lresize.onmousedown = function (e) {
+    var preX = e.clientX;
+    lresize.left = lresize.offsetLeft;
+    document.onmousemove = function (e) {
+      var curX = e.clientX;
+      var deltaX = curX - preX;
+      var leftWidth = lresize.left + deltaX;
+      if (leftWidth < 4) leftWidth = 4;
+      if (leftWidth > lcontainer.clientWidth - 4) leftWidth = lcontainer.clientWidth  - 4;
+      lleft.style.width = leftWidth + 'px';
+      lresize.style.left = leftWidth;
+      lright.style.width = (lcontainer.clientWidth - leftWidth - 4) + 'px';
     };
     //eslint-disable-next-line
     document.onmouseup = function (e) {
