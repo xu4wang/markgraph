@@ -50,29 +50,12 @@ commands:
           width: 9%
 ---`
     var r = m.update_document('hello1',dat);
+    var add = document.getElementById('__SYSTEM_ADD');
+    m.set_active_document('hello1');
+    add.click();
     var hello = document.getElementById('hello1');
     expect(hello.className).toBe('button-32');
     hello.click();
     expect(l.read()).toContain('9%');
 });
 
-it('remove button', () => {
-    //create a theme object
-    t.init('container');
-    let dat =`---
-name: not_hello
-widget: 
-    type: checkbox
-    label: Show Log 
-commands:
-    - name: show_log
-      argv:
----
-checkbox_value will be added to argv by toolbar logic.`
-    var r = m.update_document('hello',dat);
-    //an element hello should be added?
-    var hello = document.getElementById('not_hello');
-    expect(hello.className).toBe('button-32');
-    hello = document.getElementById('hello');
-    expect(hello).toBe(null);
-});
