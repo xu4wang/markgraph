@@ -6,12 +6,6 @@ var m = require('../model/model');
 var rows = [];
 var search = document.getElementById('search');
 
-var left_pannel = document.getElementById('left');
-var explorer_container = document.getElementById('explorer_container');
-var src =  document.getElementById('src');
-var dst =  document.getElementById('dst');
-
-
 /* Fill array with data
  * Fields:
  * values *array* - value of each field (in case use of table)
@@ -82,21 +76,6 @@ document.getElementById('contentArea').onclick = function (e) {
 
 search.oninput = onSearch;
 
-var node_explorer = document.getElementById('explorer');
-
-node_explorer.addEventListener('change', e => {
-  if  (e.target.checked) {
-    explorer_container.style.display = 'block';
-    left_pannel.style.display = 'flex';
-  } else {
-    if (src.style.display === 'none') {
-      left_pannel.style.display = 'none';
-    }
-    explorer_container.style.display = 'none';
-    src.style.width = '100%';
-    dst.style.width = '100%';
-  }
-});
 
 m.on('DOCUMENT-UPDATE', () => {
   build_data();

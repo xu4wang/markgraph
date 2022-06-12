@@ -5,27 +5,6 @@ var codemirror = require('codemirror');
 require('codemirror/mode/yaml/yaml.js');
 require('codemirror/mode/markdown/markdown.js');
 
-var editor_chkbox = document.getElementById('editor');
-
-var left_pannel = document.getElementById('left');
-var explorer_container = document.getElementById('explorer_container');
-var src =  document.getElementById('src');
-var dst =  document.getElementById('dst');
-
-editor_chkbox.addEventListener('change', e => {
-  if  (e.target.checked) {
-    src.style.display = 'block';
-    left_pannel.style.display = 'flex';
-  } else {
-    if (explorer_container.style.display === 'none') {
-      left_pannel.style.display = 'none';
-    }
-    src.style.display = 'none';
-    explorer_container.style.width = '100%';
-    dst.style.width = '100%';
-  }
-});
-
 var source = codemirror.fromTextArea(document.getElementById('source'), {
   mode: 'markdown',
   lineNumbers: true
