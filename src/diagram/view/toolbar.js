@@ -46,8 +46,16 @@ function add_button(name, label, cb) {
   }
 }
 
+/*
+let bigCities = cities.filter(function (e) {
+    return e.population > 3000000;
+});
+*/
+
+
 function rm_cb() {
   let name = m.get_active_document();
+  let org_name = name;
   name += '__TOOLBAR__';
   if (widgets.has(name)) {
     widgets.delete(name);
@@ -56,6 +64,11 @@ function rm_cb() {
     let e = document.getElementById(name);
     e.remove();
     //e.parentNode.removeChild(e);
+    let conf = m.get_config('buttons') || [];
+    conf = conf.filter(function (e) {
+      return e !== org_name;
+    });
+    m.set_config('buttons', conf);
   }
 }
 

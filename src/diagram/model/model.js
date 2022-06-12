@@ -285,6 +285,7 @@ function get_config(key) {
 
 function set_config(key, value) {
   set_common_attr(config_file, key, value);
+  store.emit('DOCUMENT-UPDATE', () => ({}));
 }
 
 
