@@ -5,7 +5,8 @@ var base64     = require('./base64');
 var store      = require('./state');
 
 store.init({
-  active: null,
+  active: null,   //name of current active node
+  impacted: null,  //the node being impacted
   documents: {}
 });
 
@@ -50,24 +51,33 @@ function get_documents() {
   return store.get_store().documents;
 }
 
-function _update_document(result, name, content) {
+function _update_document(impacted, docs, name, content) {
   //TODO need to check 'follow' attributes, prevent loop inherit
-  var h = loadFront(content);
   var new_file_created = false;
+  var h;
+
+  try {
+    h = loadFront(content);
+  } catch (error) {
+    h = {};
+    h.__content = content;
+  }
 
   if (h.name) {
-    delete result[name];
-    //notify listener that a file was delete
-    store.emit('DOCUMENT-DELETE', {});
+    if (h.name !== name) {
+      delete docs[name];
+      //notify listener that a file was delete
+      store.emit('DOCUMENT-DELETE', { impacted: name });
+    }
     name = h.name;
   }
 
-  if (!result[name]) {
+  if (!docs[name]) {
     //notify listener that a file was created
     new_file_created = true;
   }
 
-  result[name] = {
+  docs[name] = {
     body: h.__content,
     content: content
   };
@@ -82,24 +92,21 @@ function _update_document(result, name, content) {
     h['edges'] = [];
   }
 
-  try {    //store a JSON version in .json for the frontmatter
-    delete h.__content;
-    result[name].error = false;
-    result[name].json = h;   //...json.nodes = ['n1','n2',...]
-  } catch (err) {
-    result[name].error = true;
-    result[name].json = err.message || String(err);
-  }
+  delete h.__content;
+  docs[name].error = false;
+  docs[name].json = h;   //...json.nodes = ['n1','n2',...]
 
   if (new_file_created) {
-    store.emit('DOCUMENT-CREATE', {});
+    store.emit('DOCUMENT-CREATE',  { impacted: name });
   }
-  return result;
+  impacted = name;
+  return { impacted: name, documents: docs };
 }
 
 //  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
 function update_document(name, content) {
-  store.emit('DOCUMENT-UPDATE', ({ documents }) => (_update_document(documents, name, content)));
+  name = String(name);
+  store.emit('DOCUMENT-UPDATE', ({ impacted, documents }) => (_update_document(impacted, documents, name, content)));
 }
 
 
@@ -140,6 +147,10 @@ function set_active_document(name) {
 
 function get_active_document() {
   return store.get_store().active;
+}
+
+function get_impacted_document() {
+  return store.get_store().impacted;
 }
 
 function init_from_permlink(b64) {
@@ -235,10 +246,10 @@ function get_edges(doc) {
   return [];
 }
 
-function get_note(name) {
+function get_common_attr(name, key) {
   var docs = store.get_store().documents;
   if (docs[name]) {
-    return docs[name].json.note;
+    return docs[name].json[key];
   }
   return '';
 }
@@ -256,7 +267,7 @@ function get_all_names() {
   }
   var ret2 = {};
   for (let k of ret) {
-    ret2[k] = get_note(k) || '';
+    ret2[k] = get_common_attr(k, 'note') || '';
   }
   return ret2;
 }
@@ -274,6 +285,7 @@ exports.build_permlink = build_permlink;
 
 exports.get_active_document = get_active_document;
 exports.set_active_document = set_active_document;
+exports.get_impacted_document = get_impacted_document;
 
 exports.get_documents = get_documents;
 exports.update_document = update_document;
@@ -286,6 +298,7 @@ exports.get_edges = get_edges;
 exports.get_attr = get_attr;
 exports.update_attr = update_attr;
 exports.get_attrs = get_attrs;
+exports.get_common_attr = get_common_attr;
 
 exports.get_all_names = get_all_names;
 exports.on = store.on;

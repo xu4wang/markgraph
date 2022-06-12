@@ -10,6 +10,8 @@ var source = codemirror.fromTextArea(document.getElementById('source'), {
   lineNumbers: true
 });
 
+var ele = document.getElementById('src');
+
 function document_changed() {
   var str, name;
   str = source.getValue();
@@ -27,3 +29,9 @@ source.on('change', function () {
 m.on('ACTIVE-DOCUMENT', ({ active }) => {
   source.setValue(m.get_document_content(active));
 });
+
+function set_attr(name, val) {
+  ele.style[name] = val;
+}
+
+exports.set_attr = set_attr;

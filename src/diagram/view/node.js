@@ -85,6 +85,7 @@ function add_only_node(id, attrs, md) {
 }
 
 //display all the nodes and edges in the active document
+//if the node is a function node.
 function add_node(model, name) {
   var l = model.get_subnode_names(name);
   if (l.length === 0) {

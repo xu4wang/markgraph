@@ -34,34 +34,36 @@
     vertical-align: middle;
   }
   
-  /* CSS */
+
+/* CSS */
 .button-32 {
-  background-color: #f39bd3;
+  align-items: center;
+  background-color: #b6e0f1;
   border-radius: 12px;
-  color: #000;
-  cursor: pointer;
-  font-weight: bold;
-  padding: 10px 15px;
-  text-align: center;
-  transition: 200ms;
-  width: 100%;
+  box-shadow: transparent 0 0 0 3px,rgba(18, 18, 18, .1) 0 6px 20px;
   box-sizing: border-box;
+  color: #121212;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 1 1 auto;
+  font-family: Inter,sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  margin: 0;
+  outline: none;
+  padding: 0.5rem 0.5rem;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow .2s,-webkit-box-shadow .2s;
+  white-space: nowrap;
   border: 0;
-  font-size: 16px;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
 }
 
-.button-32:not(:disabled):hover,
-.button-32:not(:disabled):focus {
-  outline: 0;
-  background: #f4e603;
-  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
-}
-
-.button-32:disabled {
-  filter: saturate(0.2) opacity(0.5);
-  -webkit-filter: saturate(0.2) opacity(0.5);
-  cursor: not-allowed;
+.button-32:hover {
+  box-shadow: #121212 0 0 0 3px, transparent 0 0 0 0;
 }

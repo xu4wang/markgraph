@@ -5,6 +5,8 @@ var m = require('../model/model');
 
 var rows = [];
 var search = document.getElementById('search');
+var ele = document.getElementById('explorer_container');
+
 
 /* Fill array with data
  * Fields:
@@ -81,3 +83,14 @@ m.on('DOCUMENT-UPDATE', () => {
   build_data();
   clusterize.update(filterRows(rows));
 });
+
+m.on('DOCUMENT-DELETE', () => {
+  build_data();
+  clusterize.update(filterRows(rows));
+});
+
+function set_attr(name, val) {
+  ele.style[name] = val;
+}
+
+exports.set_attr = set_attr;

@@ -3,6 +3,8 @@
 var m = require('../model/model');
 var node = require('./node');
 
+var ele = document.getElementById('dst');
+
 
 //retrieve the top/left parameters of each node, rebuild yaml
 function node_moved() {
@@ -70,4 +72,9 @@ m.on('ACTIVE-DOCUMENT', ({ active }) => {
   }
 });
 
+function set_attr(name, val) {
+  ele.style[name] = val;
+}
+
+exports.set_attr = set_attr;
 exports.init = init;

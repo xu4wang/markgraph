@@ -24,7 +24,7 @@ it('active document can be saved and read ', () => {
     expect(m.get_active_document()).toBe('hello');
 });
 
-it('document can be saved and read ', () => {
+it('document can be saved and read, get common attr ', () => {
     var dat ='hello data';
     m.update_document('hello', dat);
     var d = m.get_documents();
@@ -46,6 +46,7 @@ Some Other content`;
     expect(d['hello']['content']).toBe(dat);
     expect(d['hello']['json'].age).toBe(127);
     expect(m.get_document_body('hello')).toBe('\nSome Other content');
+    expect(m.get_common_attr('hello','age')).toBe(127);
 });
 
 it('get document content ', () => {
@@ -304,8 +305,9 @@ it('active document change listener ', () => {
 });
 
 it('document change listener ', () => {
-    m.on("DOCUMENT-UPDATE", ({ documents }) => {
+    m.on("DOCUMENT-UPDATE", ({impacted, documents }) => {
         expect(documents.hello.json.age).toBe(127);
+        expect(impacted).toBe('hello');
     });
     var dat =`---
 age: 127
@@ -375,4 +377,20 @@ pets:
 Some Other content`;
     m.update_document('hello1', dat);
     expect(m.get_attr('world','kkk')).toBe(1);
+});
+
+it('impacted docs ', () => {
+    var dat ='hello data';
+    m.update_document('hello222', dat);
+    expect(m.get_impacted_document()).toBe('hello222');
+    dat = `---
+name: world222
+---
+others`
+    m.on("DOCUMENT-DELETE", ({ documents }) => {
+        expect(m.get_impacted_document()).toBe('hello222');
+        //expect(documents.world.json.name).toBe('world');
+    });
+    m.update_document('hello222',dat);
+    expect(m.get_impacted_document()).toBe('world222');
 });

@@ -25,23 +25,9 @@
     <div class="header">
       <h1>Diagram Builder</h1>
     </div>
-    <p class="subheader">
-    <a href="#" id="permalink">permalink</a>
-    <label class="toggle-switchy" for="explorer" data-size="xs" data-style="rounded" data-label="left">
-      <input checked type="checkbox" id="explorer">
-      <span class="toggle">
-        <span class="switch"></span>	
-      </span>
-      <span class="label">Node Explorer</span>
-    </label>
-    <label class="toggle-switchy" for="editor" data-size="xs" data-style="rounded" data-label="left">
-      <input checked type="checkbox" id="editor">
-      <span class="toggle">
-        <span class="switch"></span>	
-      </span>
-      <span class="label">Editor</span>
-    </label>
-  </p>
+    <p class="subheader" id="toolbar">
+       <a href="#" id="permalink">permalink</a>
+    </p>
     <div id="content">
         <div id="explorer_container">
           <div id="search_box">
@@ -69,23 +55,23 @@
           </div>
         <div id="src">
           <textarea id="source">---
-  nodes:
-    - n1
-    - n2
-    - n3
-  edges:
-    - from: n1
-      to: n2
-      label: 2️⃣
-      paintStyle:
-        strokeWidth: 1
-        stroke: red
-    - from: n2
-      to: n3
-      label: create
-    - from: n3
-      to: n1
-  ---
+nodes:
+  - n1
+  - n2
+  - n3
+edges:
+  - from: n1
+    to: n2
+    label: 2️⃣
+    paintStyle:
+      strokeWidth: 1
+      stroke: red
+  - from: n2
+    to: n3
+    label: create
+  - from: n3
+    to: n1
+---
           </textarea>
         </div>
       <div class="jtk-demo-main" id="dst">
