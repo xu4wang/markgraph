@@ -12,4 +12,5 @@ window.onload = function () {
   toolbar.init('toolbar');
   canvas.init();
   pannel.open_document();
+  toolbar.config();
 };

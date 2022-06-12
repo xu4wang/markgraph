@@ -394,3 +394,13 @@ others`
     m.update_document('hello222',dat);
     expect(m.get_impacted_document()).toBe('world222');
 });
+
+
+it('set config ', () => {
+    m.set_config('buttons', []);
+    expect(m.get_config('buttons')).toEqual([]);
+    let cf = m.get_config('button1') || [];
+    cf.push('hello');
+    m.set_config('button1', cf);
+    expect(m.get_config('button1')).toContain('hello');
+});

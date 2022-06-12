@@ -207,6 +207,11 @@ function update_attr(id, key, value) {
   obj[key] = value;
 }
 
+function set_common_attr(id, key, value) {
+  var obj = get_document_obj(id);
+  obj[key] = value;
+}
+
 function get_attr(id, key) {
   //read node attr, if not available return the default attr value
   var obj = get_document_obj(id)['style'];
@@ -272,6 +277,17 @@ function get_all_names() {
   return ret2;
 }
 
+let config_file = 'diagram.system.configuration';
+
+function get_config(key) {
+  return get_common_attr(config_file, key);
+}
+
+function set_config(key, value) {
+  set_common_attr(config_file, key, value);
+}
+
+
 function reset() {
   store.emit('RESET', () => ({
     active: null,
@@ -303,6 +319,8 @@ exports.get_common_attr = get_common_attr;
 exports.get_all_names = get_all_names;
 exports.on = store.on;
 exports.reset_listener = store.reset_listener;
+exports.set_config = set_config;
+exports.get_config = get_config;
 
 /* support EVENTS
 'ACTIVE-DOCUMENT'
