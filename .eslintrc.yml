@@ -7,6 +7,7 @@ globals:
   Uint8Array: false
   jsPlumbBrowserUI: readonly
   Clusterize: readonly
+  Swal: readonly
 
 ignorePatterns:
   - dist/
@@ -14,6 +15,11 @@ ignorePatterns:
   - test/
   - node_modules
   - rollup.config.js
+  - contextmenu.js
+
+parserOptions: 
+   ecmaVersion: 2017
+   sourceType": module
 
 rules:
   accessor-pairs:         2

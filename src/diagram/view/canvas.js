@@ -64,11 +64,22 @@ function init() {
   });
 }
 
+var current_doc = '';
 
 m.on('ACTIVE-DOCUMENT', ({ active }) => {
   if (window.j) {
     window.j.reset();
     node.add_node(m, active);
+    current_doc = active;
+  }
+});
+
+m.on('DOCUMENT-UPDATE', ({ impacted }) => {
+  if (window.j) {
+    if (current_doc === impacted) {
+      window.j.reset();
+      node.add_node(m, impacted);
+    }
   }
 });
 

@@ -5,9 +5,23 @@ var codemirror = require('codemirror');
 require('codemirror/mode/yaml/yaml.js');
 require('codemirror/mode/markdown/markdown.js');
 
+/*
+<link  href="../addon/fold/foldgutter.css" rel="stylesheet" />
+<script src="../addon/fold/foldcode.js"></script>
+<script src="../addon/fold/foldgutter.js"></script>
+<script src="../addon/fold/indent-fold.js"></script>
+*/
+//require('codemirror/addon/fold/foldgutter.css');
+require('codemirror/addon/fold/foldcode.js');
+require('codemirror/addon/fold/foldgutter.js');
+require('codemirror/addon/fold/indent-fold.js');
+
+
 var source = codemirror.fromTextArea(document.getElementById('source'), {
   mode: 'markdown',
-  lineNumbers: true
+  lineNumbers: true,
+  foldGutter: true,
+  gutters: [ 'CodeMirror-linenumbers', 'CodeMirror-foldgutter' ]
 });
 
 var ele = document.getElementById('src');

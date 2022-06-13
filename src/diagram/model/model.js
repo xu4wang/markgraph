@@ -63,15 +63,6 @@ function _update_document(impacted, docs, name, content) {
     h.__content = content;
   }
 
-  if (h.name) {
-    if (h.name !== name) {
-      delete docs[name];
-      //notify listener that a file was delete
-      store.emit('DOCUMENT-DELETE', { impacted: name });
-    }
-    name = h.name;
-  }
-
   if (!docs[name]) {
     //notify listener that a file was created
     new_file_created = true;
@@ -108,7 +99,6 @@ function update_document(name, content) {
   name = String(name);
   store.emit('DOCUMENT-UPDATE', ({ impacted, documents }) => (_update_document(impacted, documents, name, content)));
 }
-
 
 function get_subnode_names(id) {
   var diagram_documents = store.get_store().documents;
@@ -265,9 +255,11 @@ function get_all_names() {
   for (let d in docs) {
     if (docs.hasOwnProperty(d)) {
       ret.add(d);
+      /*
       for (let s of get_subnode_names(d)) {
         ret.add(s);
       }
+      */
     }
   }
   var ret2 = {};
@@ -288,6 +280,25 @@ function set_config(key, value) {
   store.emit('DOCUMENT-UPDATE', () => ({}));
 }
 
+function rename_document(src, target) {
+  store.emit('DOCUMENT-RENAME', (s) => {
+    s.documents[target] = s.documents[src];
+    delete s.documents[src];
+    return s;
+  });
+}
+
+function delete_document(name) {
+  store.emit('DOCUMENT-DELETE', (s) => {
+    delete s.documents[name];
+    return s;
+  });
+}
+
+function document_available(name) {
+  var docs = store.get_store().documents;
+  return name in docs;
+}
 
 function reset() {
   store.emit('RESET', () => ({
@@ -305,9 +316,12 @@ exports.set_active_document = set_active_document;
 exports.get_impacted_document = get_impacted_document;
 
 exports.get_documents = get_documents;
-exports.update_document = update_document;
+exports.update_document = update_document;   //new doc & modify doc
 exports.get_document_content = get_document_content;
 exports.get_document_body = get_document_body;
+exports.rename_document = rename_document;
+exports.delete_document = delete_document;
+exports.document_available = document_available;
 
 exports.get_subnode_names = get_subnode_names;
 exports.get_edges = get_edges;
@@ -327,6 +341,7 @@ exports.get_config = get_config;
 'ACTIVE-DOCUMENT'
 'DOCUMENT-UPDATE'
 "DOCUMENT-DELETE"
+"DOCUMENT-RENAME"
 "DOCUMENT-CREATE"
 'RESET'
 *****************/

@@ -1,6 +1,7 @@
 'use strict';
 
 var mixin = require('mixin-deep');
+var m = require('../model/model');
 
 
 function id2element(id) {
@@ -33,9 +34,11 @@ function add_edge(attrs) {
   }
   default_attrs.source = id2element(attrs.from);
   default_attrs.target = id2element(attrs.to);
-  var instance = window.j;
-  default_attrs = mixin(default_attrs, attrs);
-  instance.connect(default_attrs);
+  if (m.document_available(default_attrs.source) && m.document_available(default_attrs.target)) {
+    var instance = window.j;
+    default_attrs = mixin(default_attrs, attrs);
+    instance.connect(default_attrs);
+  }
 }
 
 function add_edges(edges) {

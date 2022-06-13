@@ -247,19 +247,15 @@ edges:
     expect(d['hello']['error']).toBe(false);
     var names;
     names = m.get_all_names();
-    expect(Object.keys(names).length).toBe(5);
+    expect(Object.keys(names).length).toBe(1);
 });
 
 it('document name change ', () => {
     var dat ='hello data';
     m.update_document('hello', dat);
     expect(m.get_document_body('hello')).toBe('hello data');
-    dat =`---
-name: world
----
-Some Other content`;
-    m.update_document('hello', dat);
-    expect(m.get_document_body('world')).toBe('\nSome Other content');
+    m.rename_document('hello', 'hello1');
+    expect(m.get_document_body('hello1')).toBe('hello data');
     //check hello is not available.
     expect(m.get_document_body('hello')).toBe('');
 });
@@ -361,38 +357,18 @@ pets:
 ---
 Some Other content`;
     m.update_document('hello1', dat);
-    dat =`---
-age: 127
-name: world
-contact:
-    email: email@domain.com
-    address: some location
-style:
-   kkk: 1
-pets:
-    - cat
-    - dog
-    - bat
----
-Some Other content`;
-    m.update_document('hello1', dat);
-    expect(m.get_attr('world','kkk')).toBe(1);
+    m.delete_document('hello1');
 });
 
-it('impacted docs ', () => {
+it('delete docs & impacted docs', () => {
     var dat ='hello data';
     m.update_document('hello222', dat);
     expect(m.get_impacted_document()).toBe('hello222');
-    dat = `---
-name: world222
----
-others`
-    m.on("DOCUMENT-DELETE", ({ documents }) => {
-        expect(m.get_impacted_document()).toBe('hello222');
-        //expect(documents.world.json.name).toBe('world');
-    });
-    m.update_document('hello222',dat);
-    expect(m.get_impacted_document()).toBe('world222');
+    expect('hello222' in m.get_all_names()).toBeTruthy();
+    m.delete_document('hello222');
+
+    expect(m.get_impacted_document()).toBe('hello222');
+    expect(!('hello222' in m.get_all_names())).toBeTruthy();
 });
 
 
@@ -403,4 +379,12 @@ it('set config ', () => {
     cf.push('hello');
     m.set_config('button1', cf);
     expect(m.get_config('button1')).toContain('hello');
+});
+
+
+it('docu available ', () => {
+    m.update_document('hello1', "hello");
+    expect(m.document_available('hello1')).toBeTruthy();
+    m.delete_document('hello1');
+    expect(!(m.document_available('hello1'))).toBeTruthy();
 });

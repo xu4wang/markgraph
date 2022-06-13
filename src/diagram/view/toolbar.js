@@ -15,6 +15,7 @@ when event hanppens, invoke related node by calling commands.js
 
 var m = require('../model/model');
 var c = require('./commands.js');
+var cmenu = require('./contextmenu');
 
 
 //all the node with a toolbar entry.
@@ -32,7 +33,7 @@ function btn_listener(e) {
   }
 }
 
-function add_button(name, label, cb) {
+function add_button(name, label, cb, system) {
   //add button DOM and listener
   name += '__TOOLBAR__';
   if (!widgets.has(name)) {
@@ -42,7 +43,9 @@ function add_button(name, label, cb) {
     childNode.id = name;
     container_ele.appendChild(childNode);
     childNode.addEventListener('click', cb);
-    widgets.add(name);
+    if (!system) {
+      widgets.add(name);
+    }
   }
 }
 
@@ -53,8 +56,8 @@ let bigCities = cities.filter(function (e) {
 */
 
 
-function rm_cb() {
-  let name = m.get_active_document();
+function rm_cb(name) {
+  name = name || m.get_active_document();
   let org_name = name;
   name += '__TOOLBAR__';
   if (widgets.has(name)) {
@@ -81,6 +84,17 @@ function add_cb() {
   m.set_config('buttons', conf);
 }
 
+function cleanup() {
+  let names = m.get_all_names();
+  for (let id of widgets) {
+    id = id.substring(0, id.length - '__TOOLBAR__'.length);
+    if (!(id in names)) {
+      rm_cb(id);
+    }
+  }
+
+}
+
 function exe_cb() {
   let name = m.get_active_document();
   let cmds = m.get_common_attr(name, 'commands');
@@ -93,9 +107,9 @@ function add_tools() {
   //exe active node
   //add button
   //remove button
-  add_button('__SYSTEM_EXE', 'Execute', exe_cb);
-  add_button('__SYSTEM_ADD', 'Add Button', add_cb);
-  add_button('__SYSTEM_REMOVE', 'Remove Button', rm_cb);
+  add_button('__SYSTEM_EXE', 'Execute', exe_cb, true);
+  //add_button('__SYSTEM_ADD', 'Add Button', add_cb, true);
+  //add_button('__SYSTEM_REMOVE', 'Remove Button', rm_cb, true);
 }
 
 function config() {
@@ -106,12 +120,53 @@ function config() {
   }
 }
 
+
+
+var menu;
+var cmen = [
+  {
+    text: 'Add Current Node Button',
+    events: {
+      click: function () {
+        //var target = e.target;
+        //cleanup();
+        add_cb();
+      }
+    }
+  },
+  {
+    text: 'Remove Button',
+    events: {
+      click: function () {
+        //var target = e.target;
+        //cleanup();
+        rm_cb();
+      }
+    }
+  },
+  {
+    text: 'Clean Empty Menu Item',
+    events: {
+      click: function () {
+        //var target = e.target;
+        cleanup();
+      }
+    }
+  }
+];
+
+menu = new cmenu.ContextMenu(cmen);
+
 function init(container) {
   container_ele = document.getElementById(container);
   //add function buttons
   add_tools();
+  container_ele.addEventListener('contextmenu', function (e) {
+    menu.display(e);
+  });
   return container_ele;
 }
 
 exports.init = init;
 exports.config = config;
+exports.cleanup = cleanup;
