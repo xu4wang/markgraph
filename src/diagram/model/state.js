@@ -10,28 +10,30 @@ function emit(eventName, payload) {
     console.error('Payload should be an object');
     return false;
   }
-  //there is no event subscribed
+  /*   //there is no event subscribed
   if (!events.hasOwnProperty(eventName)) {
     //console.error(`Event "${eventName}" does not exists`);
 
     store = Object.assign({}, store, payload);
     return false;  //we can still EMIT
   }
-
+ */
   //update store, with the payload, or the processed data (of payload func)
   store = Object.assign({}, store, payload);
-  events[eventName].forEach(({ dep, cb }) => {
-    if (dep.length === 0) cb(store);
-    else {
-      //dep is the parameters the cb needed.
-      const t = {};
-      dep.forEach((k) => {
-        if (store.hasOwnProperty(k)) t[k] = store[k];
-      });
-      //call cb with the generated parameters
-      cb(t);
-    }
-  });
+  if (events.hasOwnProperty(eventName)) {
+    events[eventName].forEach(({ dep, cb }) => {
+      if (dep.length === 0) cb(store);
+      else {
+        //dep is the parameters the cb needed.
+        const t = {};
+        dep.forEach((k) => {
+          if (store.hasOwnProperty(k)) t[k] = store[k];
+        });
+        //call cb with the generated parameters
+        cb(t);
+      }
+    });
+  }
   return true;
 }
 

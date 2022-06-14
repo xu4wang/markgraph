@@ -4,6 +4,17 @@ var jsyaml     = require('js-yaml');
 var base64     = require('./base64');
 var store      = require('./state');
 
+const default_name = '#default_diagram';
+const frontpage = 'index';
+
+var notes_name = default_name;
+
+let config_file = 'diagram.system.configuration';
+
+//eslint-disable-next-line
+let default_b64 = 'eyJpbmRleCI6Ii0tLVxuc3R5bGU6IHt9XG5ub2RlczpcbiAgLSBuMVxuICAtIG4yXG4gIC0gbjNcbiAgLSBuOFxuICAtIG4yNTBcbiAgLSBuMjUxXG4gIC0gbjI1M1xuZWRnZXM6IFtdXG4tLS1cblxuVGhpcyBpcyBhbiBlbXB0eSBub3Rlcy4iLCJubyBleHBsb3JlciI6Ii0tLVxubmFtZTogbm8gZXhwbG9yZXJcbm5vdGU6IGNvbmZpZ1xuc3R5bGU6XG4gIGxlZnQ6IDE1NHB4XG4gIHRvcDogMTEycHhcbm5vZGVzOiBbXVxuZWRnZXM6IFtdXG5jb21tYW5kczpcbiAgLSBuYW1lOiB0aGVtZVxuICAgIGFyZ3Y6XG4gICAgICBleHBsb3JlcjpcbiAgICAgICAgd2lkdGg6IDAlXG4tLS1cblxuXG5qampqampcblxuZWVlZGRkXG5cbiIsImRpYWdyYW0uc3lzdGVtLmNvbmZpZ3VyYXRpb24iOiItLS1cbnN0eWxlOiB7fVxubm9kZXM6IFtdXG5lZGdlczogW11cbmJ1dHRvbnM6XG4gIC0gbm8gZXhwbG9yZXJcbiAgLSBub3JtYWxcbiAgLSBub3RlIHRha2luZ1xuICAtIG5vIGV4cGxvcmVyXG4gIC0gbm9ybWFsXG4gIC0gY2FudmFzIG9ubHlcbiAgLSBub3JtYWxcbi0tLVxuXG5Db25maWd1cmF0aW9uIERhdGFcbiIsIm5vdGUgdGFraW5nIjoiLS0tXG5uYW1lOiBub3RlIHRha2luZ1xubm90ZTogY29uZmlnXG5zdHlsZToge31cbm5vZGVzOiBbXVxuZWRnZXM6IFtdXG5jb21tYW5kczpcbiAgLSBuYW1lOiB0aGVtZVxuICAgIGFyZ3Y6XG4gICAgICBleHBsb3JlcjpcbiAgICAgICAgd2lkdGg6IDAlXG4gICAgICBlZGl0b3I6XG4gICAgICAgIHdpZHRoOiA1MHZ3XG4tLS0iLCJub3JtYWwiOiItLS1cbm5vdGU6IGNvbmZpZ1xuZm9sbG93OlxuICAtIHRvZG9cbnN0eWxlOiB7fVxubm9kZXM6IFtdXG5lZGdlczogW11cbmNvbW1hbmRzOlxuICAtIG5hbWU6IHRoZW1lXG4gICAgYXJndjpcbiAgICAgIGV4cGxvcmVyOlxuICAgICAgICB3aWR0aDogMjB2d1xuICAgICAgZWRpdG9yOlxuICAgICAgICB3aWR0aDogNDB2d1xuLS0tXG5cbmtra2trIiwiIjoiLS0tXG5zdHlsZToge31cbm5vZGVzOiBbXVxuZWRnZXM6IFtdXG4tLS0ifQ==';
+
+
 store.init({
   active: null,   //name of current active node
   impacted: null,  //the node being impacted
@@ -94,22 +105,6 @@ function _update_document(impacted, docs, name, content) {
   return { impacted: name, documents: docs };
 }
 
-//  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
-function update_document(name, content) {
-  name = String(name);
-  store.emit('DOCUMENT-UPDATE', ({ impacted, documents }) => (_update_document(impacted, documents, name, content)));
-}
-
-function get_subnode_names(id) {
-  var diagram_documents = store.get_store().documents;
-  if (diagram_documents[id]) {
-    if (diagram_documents[id].json.nodes) {
-      return diagram_documents[id].json.nodes;
-    }
-  }
-  return [];
-}
-
 function get_document_content(id) {
   var diagram_documents = store.get_store().documents;
   if (diagram_documents[id]) {
@@ -120,53 +115,6 @@ function get_document_content(id) {
     return ret + diagram_documents[id].body;
   }
   return '';
-}
-
-function get_document_body(id) {
-  var diagram_documents = store.get_store().documents;
-
-  if (diagram_documents[id]) {
-    return diagram_documents[id].body;
-  }
-  return '';
-}
-
-function set_active_document(name) {
-  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
-}
-
-function get_active_document() {
-  return store.get_store().active;
-}
-
-function get_impacted_document() {
-  return store.get_store().impacted;
-}
-
-function init_from_permlink(b64) {
-  //init from b64 data
-  //reset store
-  store.emit('RESET', () => ({
-    active: null,
-    documents: {}
-  }));
-
-  try {
-    var obj_str = base64.decode(b64);
-    var obj = JSON.parse(obj_str);
-    if (obj) {
-      for (let n in obj) {
-        if (obj.hasOwnProperty(n)) {
-          update_document(n, obj[n]);
-        }
-      }
-    } else {
-      return false;
-    }
-  } catch (error) {
-    return false;
-  }
-  return true;
 }
 
 function build_permlink() {
@@ -182,6 +130,56 @@ function build_permlink() {
   return base64.encode(obj_str);
 }
 
+
+function update_storage() {
+  window.localStorage.setItem(notes_name, build_permlink());
+}
+
+//  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
+function update_document(name, content) {
+  name = String(name);
+  store.emit('DOCUMENT-UPDATE', ({ impacted, documents }) => (_update_document(impacted, documents, name, content)));
+  update_storage();
+}
+
+function get_subnode_names(id) {
+  var diagram_documents = store.get_store().documents;
+  if (diagram_documents[id]) {
+    if (diagram_documents[id].json.nodes) {
+      return diagram_documents[id].json.nodes;
+    }
+  }
+  return [];
+}
+
+
+function get_document_body(id) {
+  var diagram_documents = store.get_store().documents;
+
+  if (diagram_documents[id]) {
+    return diagram_documents[id].body;
+  }
+  return '';
+}
+
+function set_active_document(name) {
+  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
+  //check if it's a notes package???
+  if (localStorage.getItem(name) !== null) {
+    //open the note pacakge named target_doc
+    // eslint-disable-next-line no-use-before-define
+    reset(name);
+  }
+}
+
+function get_active_document() {
+  return store.get_store().active;
+}
+
+function get_impacted_document() {
+  return store.get_store().impacted;
+}
+
 function get_document_obj(id) {
   var documents = store.get_store().documents;
   if (!documents[id]) {
@@ -195,11 +193,13 @@ function update_attr(id, key, value) {
   //update yaml accordingly
   var obj = get_document_obj(id)['style'];
   obj[key] = value;
+  update_storage();
 }
 
 function set_common_attr(id, key, value) {
   var obj = get_document_obj(id);
   obj[key] = value;
+  update_storage();
 }
 
 function get_attr(id, key) {
@@ -255,7 +255,7 @@ function get_all_names() {
   for (let d in docs) {
     if (docs.hasOwnProperty(d)) {
       ret.add(d);
-      /*
+      /* subnode will not be added automatically.
       for (let s of get_subnode_names(d)) {
         ret.add(s);
       }
@@ -269,7 +269,6 @@ function get_all_names() {
   return ret2;
 }
 
-let config_file = 'diagram.system.configuration';
 
 function get_config(key) {
   return get_common_attr(config_file, key);
@@ -278,12 +277,25 @@ function get_config(key) {
 function set_config(key, value) {
   set_common_attr(config_file, key, value);
   store.emit('DOCUMENT-UPDATE', () => ({}));
+  update_storage();
 }
 
 function rename_document(src, target) {
   store.emit('DOCUMENT-RENAME', (s) => {
+    if (localStorage.getItem(src) !== null) {
+      let v = localStorage.getItem(src);
+      if (target.charAt(0) !== '#') {
+        target = '#' + target;
+      }
+      localStorage.setItem(target, v);
+      if (src !== default_name) {
+        localStorage.removeItem(src); //always remove
+      }
+      //dialog.alert('Notes Pacakge ' + name + ' also renamed!');
+    }
     s.documents[target] = s.documents[src];
     delete s.documents[src];
+    update_storage();
     return s;
   });
 }
@@ -291,6 +303,10 @@ function rename_document(src, target) {
 function delete_document(name) {
   store.emit('DOCUMENT-DELETE', (s) => {
     delete s.documents[name];
+    if (name !== default_name) {
+      localStorage.removeItem(name); //always remove
+    }
+    update_storage();
     return s;
   });
 }
@@ -300,15 +316,107 @@ function document_available(name) {
   return name in docs;
 }
 
-function reset() {
-  store.emit('RESET', () => ({
-    active: null,
-    documents: {}
-  }));
+
+function allocation_name() {
+  let current = new Date();
+  let cDate = current.getFullYear() + '_' + (current.getMonth() + 1) + '_' + current.getDate();
+  let cTime = current.getHours() + '_' + current.getMinutes() + '_' + current.getSeconds();
+  let dateTime = '#' + cDate + '_' + cTime;
+  return dateTime;
 }
 
+function init_from_permlink(b64) {
+  try {
+    var obj_str = base64.decode(b64);
+    var obj = JSON.parse(obj_str);
+    if (obj) {
+      for (let n in obj) {
+        if (obj.hasOwnProperty(n)) {
+          update_document(n, obj[n]);
+        }
+      }
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return false;
+  }
+  return true;
+}
+
+function format(hard) {
+  if (hard) {
+    store.reset_listener();
+  }
+  store.emit('FORMAT', { documents: {} });
+}
+
+//name is the new name after reset
+/*
+
+1. ('', false) : open default notes
+2. ('name',false) : open name, if not available, init it using default b64 data.
+3. ('name', 'b64 data') : assign b64 data to name in localStorage, and open name.
+4. ('', 'b64 data') : allocate a name and assign b64 data, open it.
+
+*/
+function reset(name, b64) {
+  let notes_data = '';
+  store.emit('RESET', {});
+  format();
+
+  name = name || '';
+
+  if (name === '') {
+    if (b64) {
+      //case #4
+      notes_name = allocation_name();
+      notes_data = b64;
+    } else {
+      //case #1
+      notes_name = default_name;  //use default name;
+      notes_data = window.localStorage.getItem(notes_name);
+    }
+  } else {
+    //name is not blank, #2 or #3
+    notes_name = name;
+    if (b64) {
+      notes_data = b64;
+    } else {
+      notes_data = window.localStorage.getItem(name);
+    }
+  }
+  //make sure name starts with #
+  if (notes_name.charAt(0) !== '#') {
+    notes_name = '#' + notes_name;
+  }
+
+  //init and make sure notes_data is valid
+  if (!init_from_permlink(notes_data)) {
+    notes_data = default_b64;
+    init_from_permlink(notes_data);
+  }
+
+  window.localStorage.setItem(notes_name, notes_data);
+  if (notes_name === default_name) {
+    //add all notes to the default note
+    for (let k of Object.keys(window.localStorage)) {
+      if (k !== default_name) {
+        update_document(k, 'Click to Open Notes');
+      }
+    }
+  }
+  set_active_document(frontpage);
+  store.emit('OPEN-NOTES', {});
+}
+
+function get_notes_name() {
+  return notes_name;
+}
+
+
 exports.reset = reset;
-exports.init_from_permlink = init_from_permlink;
+//exports.init_from_permlink = init_from_permlink;
 exports.build_permlink = build_permlink;
 
 exports.get_active_document = get_active_document;
@@ -337,11 +445,16 @@ exports.reset_listener = store.reset_listener;
 exports.set_config = set_config;
 exports.get_config = get_config;
 
+exports.get_notes_name = get_notes_name;
+
+exports.format = format;
+
 /* support EVENTS
 'ACTIVE-DOCUMENT'
 'DOCUMENT-UPDATE'
 "DOCUMENT-DELETE"
 "DOCUMENT-RENAME"
 "DOCUMENT-CREATE"
-'RESET'
+‘RESET’
+‘OPEN-NOTES’
 *****************/

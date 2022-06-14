@@ -74,10 +74,12 @@ var onSearch = func_onSearch;
 
 var eletb = document.getElementById('contentArea');
 
-eletb.onclick = function (e) {
+eletb.onclick = async function (e) {
   var target = e.target;
   if (target.nodeName !== 'TD') return;
-  m.set_active_document(target.parentElement.firstElementChild.innerText);
+  let target_doc = target.parentElement.firstElementChild.innerText;
+  m.set_active_document(target_doc);
+
 };
 
 //ondblclick
@@ -115,12 +117,19 @@ var cmen = [
   {
     text: 'Delete',
     events: {
-      click: function () {
+      click: async function () {
         //var target = e.target;
         //if (target.nodeName !== 'TD') return;
         //let name = target.parentElement.firstElementChild.innerText;
-        m.delete_document(name);
-        dialog.alert('Node ' + name + ' deleted!');
+        //check if there is a notes with this name, if yes, check if we need to process notes deletion.
+        if (localStorage.getItem(name) !== null) {
+          let del = await dialog.confirm('Delete Notes Pacakge: ' + name, 'Yes,delete', 'No, Keep it');
+          if (del) {
+            m.delete_document(name);
+          }
+        } else {
+          m.delete_document(name);
+        }
       }
     }
   },
@@ -130,7 +139,8 @@ var cmen = [
       click: async function () {
         let n = await dialog.readline('Rename ' + name + ' to:', 'target file name', true);
         if (n) {
-          m.rename_document(name, n.value);
+          let new_name = n.value;
+          m.rename_document(name, new_name);
         }
       }
     }
@@ -139,7 +149,7 @@ var cmen = [
     type: cmenu.ContextMenu.DIVIDER
   },
   {
-    text: 'Import DB',
+    text: 'Import Notes',
     events: {
       click: function (e) {
         var target = e.target;
@@ -149,7 +159,7 @@ var cmen = [
     }
   },
   {
-    text: 'Export DB',
+    text: 'Export Notes',
     events: {
       click: function (e) {
         var target = e.target;
@@ -179,6 +189,16 @@ m.on('DOCUMENT-DELETE', () => {
 m.on('DOCUMENT-RENAME', () => {
   build_data();
   clusterize.update(filterRows(rows));
+});
+
+m.on('OPEN-NOTES', () => {
+  build_data();
+  clusterize.update(filterRows(rows));
+});
+
+m.on('RESET', () => {
+  build_data();
+  clusterize.update([]);
 });
 
 exports.set_attr = set_attr;

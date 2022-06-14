@@ -25,6 +25,7 @@ it('active document can be saved and read ', () => {
 });
 
 it('document can be saved and read, get common attr ', () => {
+    m.reset('test1', 'bad b64 data');
     var dat ='hello data';
     m.update_document('hello', dat);
     var d = m.get_documents();
@@ -50,6 +51,7 @@ Some Other content`;
 });
 
 it('get document content ', () => {
+    m.reset('test1', 'bad b64 data');
     const dat ='hello data';
     m.update_document('hello', dat);
     var d = m.get_document_content('hello');
@@ -58,6 +60,7 @@ it('get document content ', () => {
 
 
 it('diagram object can be updated', () => {
+    m.reset('test1', 'bad b64 data');
     const dat =`---
 nodes:
     -   n1
@@ -86,6 +89,7 @@ edges:
 });
 
 it('node attr can be updated', () => {
+    m.reset('test1', 'bad b64 data');
     var dat =`---
 style:
     top: 200px
@@ -98,6 +102,7 @@ body text`;
 });
 
 it('get edges', () => {
+    m.reset('test1', 'bad b64 data');
     var dat =`---
 nodes:
     -   n1
@@ -130,6 +135,7 @@ body text`;
 });
 
 it('build permlink data', () => {
+    m.reset('test1', 'bad b64 data');
     const dat =`---
 nodes:
     -   n1
@@ -158,7 +164,7 @@ edges:
     var b64 = m.build_permlink();
     //console.log(window.diagram_documents)
     //console.log(b64);
-    m.init_from_permlink(b64);
+    m.reset('',b64);
     d = m.get_subnode_names('hello');
     expect(d).toContain('n1');
     expect(d).toContain('n4');
@@ -167,6 +173,8 @@ edges:
 });
 
 it('attr change can be serialized', () => {
+    m.reset('test1', 'bad b64 data');
+
     const dat =`---
 style:
     top: 200px
@@ -175,18 +183,24 @@ body text`;
     m.update_document('n1',dat);
     m.update_attr('n1','top','kkkk');
     var b64 = m.build_permlink();
-    m.init_from_permlink(b64);
+    m.reset('',b64);
     expect(m.get_attr('n1','top')).toBe('kkkk');
 });
 
+/*
 it('error permlink data', () => {
+    m.reset('test1', 'bad b64 data');
+
     var b64 = 'wrong data';
-    var d = m.init_from_permlink(b64);
+    var d = m.reset('',b64);
     //d = m.get_subnode_names();
     expect(d).toBe(false);
 });
+*/
 
 it('get subnode names', () => {
+    m.reset('test1', 'bad b64 data');
+
     const dat =`---
 nodes:
     -   n1
@@ -219,7 +233,9 @@ edges:
     expect(d).toEqual([]);
 });
 
-it('update diagram will create global name list', () => {
+it('update diagram will not create global name list', () => {
+    m.reset('test1', 'bad b64 data');
+
     const dat =`---
 nodes:
     -   n1
@@ -239,7 +255,8 @@ edges:
     -   from: n3
         to: n1
 ---`;
-    m.reset();
+    m.format(true);
+    //expect(m.get_notes_name()).toBe('#test1');
     m.reset_listener();
 
     m.update_document('hello', dat);
@@ -247,10 +264,12 @@ edges:
     expect(d['hello']['error']).toBe(false);
     var names;
     names = m.get_all_names();
-    expect(Object.keys(names).length).toBe(1);
+    expect(!('n1' in names)).toBeTruthy();
+    expect(!('n4' in names)).toBeTruthy();
 });
 
 it('document name change ', () => {
+    m.format(true);
     var dat ='hello data';
     m.update_document('hello', dat);
     expect(m.get_document_body('hello')).toBe('hello data');
@@ -261,6 +280,8 @@ it('document name change ', () => {
 });
 
 it('style inherit ', () => {
+    m.format(true);
+
     var dat =`---
 style :
     attr1 : value1
@@ -294,6 +315,8 @@ hello`;
 });
 
 it('active document change listener ', () => {
+    m.format(true);
+
     m.on("ACTIVE-DOCUMENT", ({ active }) => {
         expect(active).toBe('Hello World');
     });
@@ -301,6 +324,8 @@ it('active document change listener ', () => {
 });
 
 it('document change listener ', () => {
+    m.format(true);
+
     m.on("DOCUMENT-UPDATE", ({impacted, documents }) => {
         expect(documents.hello.json.age).toBe(127);
         expect(impacted).toBe('hello');
@@ -320,6 +345,8 @@ Some Other content`;
 });
 
 it('document create listener ', () => {
+    m.format(true);
+
     m.reset();
     m.on("DOCUMENT-CREATE", ({ documents }) => {
         expect(documents.hello.json.age).toBe(127);
@@ -339,6 +366,8 @@ Some Other content`;
 });
 
 it('document delete listener ', () => {
+    m.format(true);
+
     m.reset();
     m.reset_listener();
     m.on("DOCUMENT-DELETE", ({ documents }) => {
@@ -361,6 +390,8 @@ Some Other content`;
 });
 
 it('delete docs & impacted docs', () => {
+    m.format(true);
+
     var dat ='hello data';
     m.update_document('hello222', dat);
     expect(m.get_impacted_document()).toBe('hello222');
@@ -373,6 +404,8 @@ it('delete docs & impacted docs', () => {
 
 
 it('set config ', () => {
+    m.format(true);
+
     m.set_config('buttons', []);
     expect(m.get_config('buttons')).toEqual([]);
     let cf = m.get_config('button1') || [];
@@ -383,6 +416,8 @@ it('set config ', () => {
 
 
 it('docu available ', () => {
+    m.format(true);
+
     m.update_document('hello1', "hello");
     expect(m.document_available('hello1')).toBeTruthy();
     m.delete_document('hello1');

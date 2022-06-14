@@ -34,6 +34,18 @@ async function readline(label, placeholder, showcancel) {
   return text;
 }
 
+async function confirm(label, yes, no) {
+  let n = await Swal.fire({
+    title: label,
+    showDenyButton: true,
+    //showCancelButton: true,
+    confirmButtonText: yes || 'Yes',
+    denyButtonText: no || 'No'
+  });
+  return (n.isConfirmed);
+}
+
 exports.alert = alert;
 exports.readline = readline;
+exports.confirm = confirm;
 
