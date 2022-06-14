@@ -50,12 +50,9 @@ commands:
           width: 9%
 ---`
     var r = m.update_document('hello1',dat);
-    var add = document.getElementById('__SYSTEM_ADD');
+    var add = document.getElementById('__SYSTEM_EXE__TOOLBAR__');
     m.set_active_document('hello1');
     add.click();
-    var hello = document.getElementById('hello1');
-    expect(hello.className).toBe('button-32');
-    hello.click();
     expect(l.read()).toContain('9%');
 });
 

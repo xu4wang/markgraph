@@ -32,9 +32,9 @@ function add_edge(attrs) {
     default_label.options.label = attrs.label;
     default_attrs.overlays.push(default_label);
   }
-  default_attrs.source = id2element(attrs.from);
-  default_attrs.target = id2element(attrs.to);
-  if (m.document_available(default_attrs.source) && m.document_available(default_attrs.target)) {
+  if (m.document_available(attrs.from) && m.document_available(attrs.to)) {
+    default_attrs.source = id2element(attrs.from);
+    default_attrs.target = id2element(attrs.to);
     var instance = window.j;
     default_attrs = mixin(default_attrs, attrs);
     instance.connect(default_attrs);
