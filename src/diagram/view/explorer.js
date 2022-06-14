@@ -178,27 +178,23 @@ eletb.addEventListener('contextmenu', function (e) {
 
 m.on('DOCUMENT-UPDATE', () => {
   build_data();
-  clusterize.update(filterRows(rows));
+  func_onSearch();
 });
 
 m.on('DOCUMENT-DELETE', () => {
   build_data();
-  clusterize.update(filterRows(rows));
+  func_onSearch();
 });
 
 m.on('DOCUMENT-RENAME', () => {
   build_data();
-  clusterize.update(filterRows(rows));
+  func_onSearch();
 });
 
 m.on('OPEN-NOTES', () => {
   build_data();
-  clusterize.update(filterRows(rows));
+  func_onSearch();
 });
 
-m.on('RESET', () => {
-  build_data();
-  clusterize.update([]);
-});
 
 exports.set_attr = set_attr;

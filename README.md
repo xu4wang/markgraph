@@ -74,13 +74,6 @@ JSON
     ...
 }
 ```
-- [x] Use dropdown control to select one item, the diagram layout defination or one node to edit.
-- [x] Double click one node to select it in the source editor.
-- [x] Syntax highlight for Markdown(node defination).
-- [x] node can inherit style from other nodes, using the follow parameter.
-- [x] add name and note field to support search and rename.
-- [ ] add shortcut or button to delete a node.
-- [x] adjust layout:  node browser + canvas + source editor
 
 # HOWTO
 
