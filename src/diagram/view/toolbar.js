@@ -187,7 +187,7 @@ function init(container) {
   notes_name_ele = document.getElementById('notes_name');
   doc_name_ele = document.getElementById('doc_name');
   doc_name_ele.onclick = async function () {
-    let n = await dialog.readline('Please input name', 'file name', true);
+    let n = await dialog.readline('Please input file name to open', 'file name', true);
     if (n) {
       m.set_active_document(n.value);
     }
