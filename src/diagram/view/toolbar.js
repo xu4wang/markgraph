@@ -16,6 +16,7 @@ when event hanppens, invoke related node by calling commands.js
 var m = require('../model/model');
 var c = require('./commands.js');
 var cmenu = require('./contextmenu');
+var dialog = require('./dialog');
 
 
 //all the node with a toolbar entry.
@@ -81,6 +82,17 @@ function rm_cb(name) {
       return e !== org_name;
     });
     m.set_config('buttons', conf);
+  }
+}
+
+function clear_all_cb() {
+  for (let name of widgets) {
+    widgets.delete(name);
+    //remove widget name from DOM
+    //name = name.substring(0, name.length - '__TOOLBAR__'.length);
+    let e = document.getElementById(name);
+    e.remove();
+    //e.parentNode.removeChild(e);
   }
 }
 
@@ -174,6 +186,12 @@ function init(container) {
   container_ele = document.getElementById(container);
   notes_name_ele = document.getElementById('notes_name');
   doc_name_ele = document.getElementById('doc_name');
+  doc_name_ele.onclick = async function () {
+    let n = await dialog.readline('Please input name', 'file name', true);
+    if (n) {
+      m.set_active_document(n.value);
+    }
+  };
   //add function buttons
   add_tools();
   container_ele.addEventListener('contextmenu', function (e) {
@@ -195,6 +213,8 @@ m.on('OPEN-NOTES', () => {
   notes_name_ele.innerHTML = m.get_notes_name();
   //change hash
   window.location.hash = m.get_notes_name();
+  clear_all_cb();
+  config();
 });
 
 

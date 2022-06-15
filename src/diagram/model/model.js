@@ -294,7 +294,12 @@ function rename_document(src, target) {
       //dialog.alert('Notes Pacakge ' + name + ' also renamed!');
     }
     s.documents[target] = s.documents[src];
-    delete s.documents[src];
+    let keep = get_common_attr(config_file, 'keep');
+    if (keep instanceof Array) {
+      if (!(get_common_attr(config_file, 'keep').includes(src))) {
+        delete s.documents[src];
+      }
+    }
     update_storage();
     return s;
   });
@@ -302,7 +307,13 @@ function rename_document(src, target) {
 
 function delete_document(name) {
   store.emit('DOCUMENT-DELETE', (s) => {
-    delete s.documents[name];
+    let keep = get_common_attr(config_file, 'keep');
+    if (keep instanceof Array) {
+      if (!(get_common_attr(config_file, 'keep').includes(name))) {
+        delete s.documents[name];
+        s.impacted = name;
+      }
+    }
     if (name !== default_name) {
       localStorage.removeItem(name); //always remove
     }
@@ -395,6 +406,12 @@ function reset(name, b64) {
   if (!init_from_permlink(notes_data)) {
     notes_data = default_b64;
     init_from_permlink(notes_data);
+  }
+
+  //make sure we have config file, 'diagram.system.configuration'
+  let cf = get_config('keep');
+  if (cf === '') {
+    set_config('keep', [ config_file ]);
   }
 
   window.localStorage.setItem(notes_name, notes_data);

@@ -272,11 +272,12 @@ it('document name change ', () => {
     m.format(true);
     var dat ='hello data';
     m.update_document('hello', dat);
+    m.set_config('keep',['hello']);
     expect(m.get_document_body('hello')).toBe('hello data');
     m.rename_document('hello', 'hello1');
     expect(m.get_document_body('hello1')).toBe('hello data');
     //check hello is not available.
-    expect(m.get_document_body('hello')).toBe('');
+    expect(m.get_document_body('hello')).toBe('hello data'); //hello will not be deleted
 });
 
 it('style inherit ', () => {
@@ -386,6 +387,7 @@ pets:
 ---
 Some Other content`;
     m.update_document('hello1', dat);
+    m.set_config('keep',[]);
     m.delete_document('hello1');
 });
 
@@ -396,6 +398,7 @@ it('delete docs & impacted docs', () => {
     m.update_document('hello222', dat);
     expect(m.get_impacted_document()).toBe('hello222');
     expect('hello222' in m.get_all_names()).toBeTruthy();
+    m.set_config('keep',[]);
     m.delete_document('hello222');
 
     expect(m.get_impacted_document()).toBe('hello222');
@@ -420,6 +423,7 @@ it('docu available ', () => {
 
     m.update_document('hello1', "hello");
     expect(m.document_available('hello1')).toBeTruthy();
+    m.set_config('keep',[]);
     m.delete_document('hello1');
     expect(!(m.document_available('hello1'))).toBeTruthy();
 });
