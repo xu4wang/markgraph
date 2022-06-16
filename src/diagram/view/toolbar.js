@@ -29,6 +29,32 @@ const target_state_init = {
   outline: 'show'          //show, hide, locked
 };
 
+let browse_history = [ 'index' ];
+let current_file = 0;
+
+function add_to_list(name) {
+  browse_history.push(name);
+  if (browse_history.length > 100) browse_history.shift();
+  //current_file = browse_history.length - 1;
+}
+
+function previous() {
+  current_file -= 1;
+  if (current_file < 0) current_file = 0;
+  return browse_history.at(current_file);
+}
+
+function next() {
+  current_file += 1;
+  if (current_file === browse_history.length) current_file = browse_history.length - 1;
+  return browse_history.at(current_file);
+}
+
+function reset_history() {
+  browse_history = [ 'index' ];
+  current_file = 0;
+}
+
 let target_state = Object.assign({}, target_state_init);
 
 const colors = {
@@ -188,6 +214,16 @@ function exe_show_hide_lock(e, name, mod) {
   }
 }
 
+function exe_backward() {
+  m.set_active_document(previous());
+  browse_history.pop();
+}
+
+function exe_forward() {
+  m.set_active_document(next());
+  browse_history.pop();
+}
+
 function add_tools() {
   //exe active node
   //add button
@@ -197,8 +233,9 @@ function add_tools() {
   add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
   add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
   add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, false);  //false means not a user button.
-
+  add_button('__SYSTEM_BACKWARD', '<-', exe_backward, false);  //false means not a user button.
   add_button('__SYSTEM_INDEX', 'Index', exe_index, false);  //false means not a user button.
+  add_button('__SYSTEM_FORWARD', '->', exe_forward, false);  //false means not a user button.
 
   //add_button('__SYSTEM_EXE', 'Execute', exe_cb, false);  //false means not a user button.
   //add_button('__SYSTEM_ADD', 'Add Button', add_cb, true);
@@ -237,7 +274,7 @@ var cmen = [
       }
     }
   },
-  {
+  /*{
     text: 'Clean Empty Menu Item',
     events: {
       click: function () {
@@ -245,7 +282,7 @@ var cmen = [
         cleanup();
       }
     }
-  },
+  },*/
   {
     text: 'Run Current Node',
     events: {
@@ -278,6 +315,9 @@ function init(container) {
   widgets = new Set();
   canvas.lock(false);
   outline.lock(false);
+  explorer.set_attr('display', 'block');
+  editor.set_attr('display', 'block');
+  outline.set_attr('display', 'block');
 
   //add function buttons
   add_tools();
@@ -294,6 +334,7 @@ function init(container) {
 
 m.on('ACTIVE-DOCUMENT', () => {
   if (doc_name_ele) doc_name_ele.innerHTML = m.get_active_document();
+  add_to_list(m.get_active_document());
 });
 
 m.on('OPEN-NOTES', () => {
@@ -302,6 +343,7 @@ m.on('OPEN-NOTES', () => {
   notes_name_ele.innerHTML = m.get_notes_name();
   //change hash
   window.location.hash = m.get_notes_name();
+  reset_history();
 });
 
 m.on('STORAGE_UPDATE', () => {
