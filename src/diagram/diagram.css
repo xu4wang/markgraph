@@ -39,7 +39,7 @@ body {
 }
 #notes_name {
   float: right;
-  margin-right: 20px;
+  margin-right: 60px;
 }
 #doc_name {
   float: right;
@@ -53,15 +53,21 @@ body {
   flex-direction: column;
 }
 
+#outline {
+  width: 200px;
+  height: 100%;
+  flex-direction: column;
+}
 
 #src {
-  width: 20%;
+  width: 100%;
   height: 100vh;
 }
 
 #dst {
   width: 100%;
   height: 100vh;
+  flex-grow: 1;
 }
 
 #src .CodeMirror {
@@ -336,6 +342,40 @@ input{
   box-shadow: #121212 0 0 0 3px, transparent 0 0 0 0;
 }
 
+.button-outline {
+  align-items: center;
+  background-color: #eaecee;
+  border-radius: 2px;
+  box-shadow: transparent 0 0 0 3px,rgba(18, 18, 18, .1) 0 6px 20px;
+  box-sizing: border-box;
+  color: #000000;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 1 1 auto;
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  margin: 0;
+  outline: none;
+  padding: 0.5rem 0.5rem;
+  text-align: center;
+  text-decoration: none;
+  transition: box-shadow .2s,-webkit-box-shadow .2s;
+  white-space: nowrap;
+  border: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin-bottom: 4px;
+  margin-left: 4px;
+  width: 100%;
+}
+
+.button-outline:hover {
+  box-shadow: #0a62d0 0 0 0 3px, transparent 0 0 0 0;
+}
 
 
 .cm_container{

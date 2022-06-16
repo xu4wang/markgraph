@@ -133,6 +133,11 @@ function build_permlink() {
 
 function update_storage() {
   window.localStorage.setItem(notes_name, build_permlink());
+  store.emit('STORAGE_UPDATE', {});
+}
+
+function get_b64() {
+  return window.localStorage.getItem(notes_name);
 }
 
 //  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
@@ -431,6 +436,9 @@ function get_notes_name() {
   return notes_name;
 }
 
+function is_notes(name) {
+  return localStorage.getItem(name) !== null;
+}
 
 exports.reset = reset;
 //exports.init_from_permlink = init_from_permlink;
@@ -466,6 +474,9 @@ exports.get_notes_name = get_notes_name;
 
 exports.format = format;
 
+exports.get_b64 = get_b64;
+exports.is_notes = is_notes;
+
 /* support EVENTS
 'ACTIVE-DOCUMENT'
 'DOCUMENT-UPDATE'
@@ -474,4 +485,5 @@ exports.format = format;
 "DOCUMENT-CREATE"
 ‘RESET’
 ‘OPEN-NOTES’
+STORAGE_UPDATE
 *****************/

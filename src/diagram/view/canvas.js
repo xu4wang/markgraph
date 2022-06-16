@@ -5,6 +5,7 @@ var node = require('./node');
 
 var ele = document.getElementById('dst');
 
+let is_locked = false;
 
 //retrieve the top/left parameters of each node, rebuild yaml
 function node_moved() {
@@ -66,8 +67,11 @@ function init() {
 
 var current_doc = '';
 
+function get_current_doc() {
+  return current_doc;
+}
 m.on('ACTIVE-DOCUMENT', ({ active }) => {
-  if (window.j) {
+  if (window.j && !is_locked) {
     window.j.reset();
     node.add_node(m, active);
     current_doc = active;
@@ -76,16 +80,26 @@ m.on('ACTIVE-DOCUMENT', ({ active }) => {
 
 m.on('DOCUMENT-UPDATE', ({ impacted }) => {
   if (window.j) {
-    if (current_doc === impacted) {
+    if ((current_doc === impacted) && !is_locked) { //if not locked,update current doc
       window.j.reset();
       node.add_node(m, impacted);
     }
+    if (m.get_subnode_names(current_doc).includes(impacted)) { //regardless locked or not update in case a subnode is impacted.
+      window.j.reset();
+      node.add_node(m, current_doc);
+    }
   }
-});
+}
+);
 
 function set_attr(name, val) {
   ele.style[name] = val;
 }
 
+function lock(status) {
+  is_locked = status;
+}
 exports.set_attr = set_attr;
 exports.init = init;
+exports.lock = lock;
+exports.get_currect_doc = get_current_doc;

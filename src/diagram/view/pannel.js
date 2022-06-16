@@ -13,7 +13,7 @@ function open_document() {
       window.location.hash = m.get_notes_name();
     } else {
       //hash is notes name
-      m.reset(location.hash.toString());
+      m.reset(decodeURI(location.hash.toString()));
     }
   } else {
     m.reset();

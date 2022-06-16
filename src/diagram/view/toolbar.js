@@ -17,6 +17,25 @@ var m = require('../model/model');
 var c = require('./commands.js');
 var cmenu = require('./contextmenu');
 var dialog = require('./dialog');
+let explorer = require('./explorer');
+let canvas = require('./canvas');
+let editor = require('./editor');
+let outline = require('./outline');
+
+const target_state_init = {
+  explorer: 'show',        //show, hide
+  editor: 'show',          //show, hide
+  canvas: 'show',          //show, locked
+  outline: 'show'          //show, hide, locked
+};
+
+let target_state = Object.assign({}, target_state_init);
+
+const colors = {
+  show: 'white',
+  hide: 'gray',
+  lock: 'red'
+};
 
 
 //all the node with a toolbar entry.
@@ -40,16 +59,12 @@ function btn_listener(e) {
   }
 }
 
-function add_button(name, label, cb, user) {
+function add_button(name, label, cb, classname) {
   //add button DOM and listener
   name += '__TOOLBAR__';
-  let classname = user;
+  classname = classname || 'button-system';
   if (!widgets.has(name)) {
-    if (!user) {
-      classname = 'button-system';
-    } else {
-      widgets.add(name);
-    }
+    widgets.add(name);
     var childNode = document.createElement('button');
     childNode.innerHTML = label;
     childNode.className = classname;
@@ -113,7 +128,6 @@ function cleanup() {
       rm_cb(id);
     }
   }
-
 }
 
 function exe_cb() {
@@ -127,12 +141,66 @@ function exe_home() {
   m.reset();
 }
 
+function exe_index() {
+  m.set_active_document('index');
+}
+
+function exe_show_hide(e, name, mod) {
+  if (target_state[name] === 'hide') {
+    mod.set_attr('display', 'block');
+    e.target.style.color = colors['show'];
+    target_state[name] = 'show';
+  } else {
+    mod.set_attr('display', 'none');
+    e.target.style.color = colors['hide'];
+    target_state[name] = 'hide';
+  }
+}
+
+function exe_show_lock(e, name, mod) {
+  if (target_state[name] === 'lock') {
+    mod.lock(false);
+    e.target.style.color = colors['show'];
+    target_state[name] = 'show';
+  } else {
+    mod.lock(true);
+    e.target.style.color = colors['lock'];
+    target_state[name] = 'lock';
+  }
+}
+
+function exe_show_hide_lock(e, name, mod) {
+  if (target_state[name] === 'hide') {
+    //hide => show
+    mod.set_attr('display', 'block');
+    e.target.style.color = colors['show'];
+    target_state[name] = 'show';
+  } else if (target_state[name] === 'show') {
+    //show => lock
+    mod.lock(true);
+    e.target.style.color = colors['lock'];
+    target_state[name] = 'lock';
+  } else {
+    mod.lock(false);
+    e.target.style.color = colors['hide'];
+    target_state[name] = 'hide';
+    mod.set_attr('display', 'none');
+  }
+}
+
 function add_tools() {
   //exe active node
   //add button
   //remove button
-  add_button('__SYSTEM_HOME', 'Home', exe_home, false);  //false means not a user button.
-  add_button('__SYSTEM_EXE', 'Execute', exe_cb, false);  //false means not a user button.
+  add_button('__SYSTEM_HOME', 'Lobby', exe_home, false);  //false means not a user button.
+  add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false);  //false means not a user button.
+  add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
+  add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
+  add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, false);  //false means not a user button.
+
+  add_button('__SYSTEM_INDEX', 'Index', exe_index, false);  //false means not a user button.
+
+  //add_button('__SYSTEM_EXE', 'Execute', exe_cb, false);  //false means not a user button.
   //add_button('__SYSTEM_ADD', 'Add Button', add_cb, true);
   //add_button('__SYSTEM_REMOVE', 'Remove Button', rm_cb, true);
 }
@@ -177,8 +245,19 @@ var cmen = [
         cleanup();
       }
     }
+  },
+  {
+    text: 'Run Current Node',
+    events: {
+      click: function () {
+        //var target = e.target;
+        exe_cb();
+      }
+    }
   }
 ];
+
+//exe_cb
 
 menu = new cmenu.ContextMenu(cmen);
 
@@ -192,6 +271,14 @@ function init(container) {
       m.set_active_document(n.value);
     }
   };
+
+  //init internal data
+  target_state = Object.assign({}, target_state_init);
+  clear_all_cb();
+  widgets = new Set();
+  canvas.lock(false);
+  outline.lock(false);
+
   //add function buttons
   add_tools();
   container_ele.addEventListener('contextmenu', function (e) {
@@ -206,17 +293,20 @@ function init(container) {
 */
 
 m.on('ACTIVE-DOCUMENT', () => {
-  doc_name_ele.innerHTML = m.get_active_document();
+  if (doc_name_ele) doc_name_ele.innerHTML = m.get_active_document();
 });
 
 m.on('OPEN-NOTES', () => {
+  init('toolbar');
+  config();
   notes_name_ele.innerHTML = m.get_notes_name();
   //change hash
   window.location.hash = m.get_notes_name();
-  clear_all_cb();
-  config();
 });
 
+m.on('STORAGE_UPDATE', () => {
+  if (notes_name_ele) notes_name_ele.href = '#diag=' +  m.get_b64();
+});
 
 exports.init = init;
 exports.config = config;

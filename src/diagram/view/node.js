@@ -88,7 +88,8 @@ function add_only_node(id, attrs, md) {
 //if the node is a function node.
 function add_node(model, name) {
   var l = model.get_subnode_names(name);
-  if (l.length === 0) {
+  var e = model.get_edges(name);
+  if (e.length === 0) {
     add_only_node(name, model.get_attrs(name), model.get_document_body(name));
   } else {
     for (let n of l) {
@@ -97,7 +98,7 @@ function add_node(model, name) {
       }
       //add_node(model, n);
     }
-    edge.add_edges(model.get_edges(name));  //add edges here sine edges are part of node.
+    edge.add_edges(e);  //add edges here sine edges are part of node.
   }
 }
 

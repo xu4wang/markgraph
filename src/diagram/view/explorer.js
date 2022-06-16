@@ -104,7 +104,7 @@ function set_attr(name, val) {
 var menu;
 var cmen = [
   {
-    text: 'New',
+    text: 'New Node',
     events: {
       click: async function () {
         let n = await dialog.readline('Please input name', 'file name', true);
@@ -115,14 +115,14 @@ var cmen = [
     }
   },
   {
-    text: 'Delete',
+    text: 'Delete Node',
     events: {
       click: async function () {
         //var target = e.target;
         //if (target.nodeName !== 'TD') return;
         //let name = target.parentElement.firstElementChild.innerText;
         //check if there is a notes with this name, if yes, check if we need to process notes deletion.
-        if (localStorage.getItem(name) !== null) {
+        if (m.is_notes(name)) {
           let del = await dialog.confirm('Delete Notes Pacakge: ' + name, 'Yes,delete', 'No, Keep it');
           if (del) {
             m.delete_document(name);
@@ -134,12 +134,13 @@ var cmen = [
     }
   },
   {
-    text: 'Rename',
+    text: 'Rename Node',
     events: {
       click: async function () {
         let n = await dialog.readline('Rename ' + name + ' to:', 'target file name', true);
         if (n) {
           let new_name = n.value;
+          if (new_name === '') return;
           m.rename_document(name, new_name);
         }
       }
@@ -147,7 +148,8 @@ var cmen = [
   },
   {
     type: cmenu.ContextMenu.DIVIDER
-  },
+  }
+  /*,
   {
     text: 'Import Notes',
     events: {
@@ -168,6 +170,7 @@ var cmen = [
       }
     }
   }
+  */
 ];
 
 menu = new cmenu.ContextMenu(cmen);
