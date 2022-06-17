@@ -233,9 +233,9 @@ function add_tools() {
   add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
   add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
   add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, false);  //false means not a user button.
-  add_button('__SYSTEM_BACKWARD', '<-', exe_backward, false);  //false means not a user button.
-  add_button('__SYSTEM_INDEX', 'Index', exe_index, false);  //false means not a user button.
-  add_button('__SYSTEM_FORWARD', '->', exe_forward, false);  //false means not a user button.
+  add_button('__SYSTEM_BACKWARD', '<-', exe_backward, 'button-user');  //false means not a user button.
+  add_button('__SYSTEM_INDEX', 'Index', exe_index, 'button-user');  //false means not a user button.
+  add_button('__SYSTEM_FORWARD', '->', exe_forward, 'button-user');  //false means not a user button.
 
   //add_button('__SYSTEM_EXE', 'Execute', exe_cb, false);  //false means not a user button.
   //add_button('__SYSTEM_ADD', 'Add Button', add_cb, true);
@@ -255,7 +255,7 @@ function config() {
 var menu;
 var cmen = [
   {
-    text: 'Add Current Node Button',
+    text: 'Add Current Node to Bookmark',
     events: {
       click: function () {
         //var target = e.target;
@@ -265,7 +265,7 @@ var cmen = [
     }
   },
   {
-    text: 'Remove Button',
+    text: 'Remove from Bookmark',
     events: {
       click: function () {
         //var target = e.target;

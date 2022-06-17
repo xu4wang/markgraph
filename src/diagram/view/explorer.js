@@ -147,6 +147,20 @@ var cmen = [
     }
   },
   {
+    text: 'Duplicate Node',
+    events: {
+      click: async function () {
+        let n = await dialog.readline('Duplicate ' + name + ' to:', 'target file name', true);
+        if (n) {
+          let new_name = n.value;
+          if (new_name === '') return;
+          let c = m.get_document_content(name);
+          m.update_document(new_name, c);
+        }
+      }
+    }
+  },
+  {
     type: cmenu.ContextMenu.DIVIDER
   }
   /*,

@@ -89,15 +89,18 @@ function add_only_node(id, attrs, md) {
 function add_node(model, name) {
   var l = model.get_subnode_names(name);
   var e = model.get_edges(name);
-  if (e.length === 0) {
+  if (l.length === 0) {
     add_only_node(name, model.get_attrs(name), model.get_document_body(name));
   } else {
     for (let n of l) {
       if (model.document_available(n)) {
         add_only_node(n, model.get_attrs(n), model.get_document_body(n));
       }
-      //add_node(model, n);
     }
+  }
+  if (e.length !== 0) {
+    //    add_only_node(name, model.get_attrs(name), model.get_document_body(name));
+    //  } else {
     edge.add_edges(e);  //add edges here sine edges are part of node.
   }
 }

@@ -4,7 +4,7 @@ var jsyaml     = require('js-yaml');
 var base64     = require('./base64');
 var store      = require('./state');
 
-const default_name = '#default_diagram';
+const default_name = '#default_notes';
 const frontpage = 'index';
 
 var notes_name = default_name;
@@ -423,9 +423,9 @@ function reset(name, b64) {
   if (notes_name === default_name) {
     //add all notes to the default note
     for (let k of Object.keys(window.localStorage)) {
-      if (k !== default_name) {
-        update_document(k, 'Click to Open Notes');
-      }
+      //if (k !== default_name) {
+      update_document(k, 'Click to Open Notes');
+      //}
     }
   }
   set_active_document(frontpage);
