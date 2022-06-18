@@ -19,9 +19,16 @@ var dialog = require('./dialog');
 
 //get all the node names and notes
 
+let notes_mode = false;
+
 function build_data() {
   rows = [];
   var names = m.get_all_names();
+  if (notes_mode) {
+    names = m.get_all_notes();
+  } else {
+    names = m.get_all_names();
+  }
   for (let k of Object.keys(names)) {
     rows.push({
       values: [ k, names[k] ],
@@ -78,8 +85,12 @@ eletb.onclick = async function (e) {
   var target = e.target;
   if (target.nodeName !== 'TD') return;
   let target_doc = target.parentElement.firstElementChild.innerText;
-  m.set_active_document(target_doc);
-
+  if (notes_mode) {
+    notes_mode = false;
+    m.reset(target_doc);
+  } else {
+    m.set_active_document(target_doc);
+  }
 };
 
 //ondblclick
@@ -95,7 +106,11 @@ eletb.oncontextmenu = function (e) {
 search.oninput = onSearch;
 
 
-
+function show_notes() {
+  notes_mode = true;
+  build_data();
+  func_onSearch();
+}
 
 function set_attr(name, val) {
   ele.style[name] = val;
@@ -104,28 +119,28 @@ function set_attr(name, val) {
 var menu;
 var cmen = [
   {
-    text: 'New Node',
+    text: 'New',
     events: {
       click: async function () {
         let n = await dialog.readline('Please input name', 'file name', true);
         if (n) {
-          m.update_document(n.value, '');
+          if (notes_mode) {
+            m.new_notes(n.value);
+          } else {
+            m.update_document(n.value, '');
+          }
         }
       }
     }
   },
   {
-    text: 'Delete Node',
+    text: 'Delete',
     events: {
       click: async function () {
-        //var target = e.target;
-        //if (target.nodeName !== 'TD') return;
-        //let name = target.parentElement.firstElementChild.innerText;
-        //check if there is a notes with this name, if yes, check if we need to process notes deletion.
-        if (m.is_notes(name)) {
+        if (notes_mode) {
           let del = await dialog.confirm('Delete Notes Pacakge: ' + name, 'Yes,delete', 'No, Keep it');
           if (del) {
-            m.delete_document(name);
+            m.delete_notes(name);
           }
         } else {
           m.delete_document(name);
@@ -134,28 +149,36 @@ var cmen = [
     }
   },
   {
-    text: 'Rename Node',
+    text: 'Rename',
     events: {
       click: async function () {
         let n = await dialog.readline('Rename ' + name + ' to:', 'target file name', true);
         if (n) {
           let new_name = n.value;
           if (new_name === '') return;
-          m.rename_document(name, new_name);
+          if (notes_mode) {
+            m.rename_notes(name, new_name);
+          } else {
+            m.rename_document(name, new_name);
+          }
         }
       }
     }
   },
   {
-    text: 'Duplicate Node',
+    text: 'Duplicate',
     events: {
       click: async function () {
         let n = await dialog.readline('Duplicate ' + name + ' to:', 'target file name', true);
         if (n) {
           let new_name = n.value;
           if (new_name === '') return;
-          let c = m.get_document_content(name);
-          m.update_document(new_name, c);
+          if (notes_mode) {
+            m.duplicate_notes(name, new_name);
+          } else {
+            let c = m.get_document_content(name);
+            m.update_document(new_name, c);
+          }
         }
       }
     }
@@ -215,3 +238,4 @@ m.on('OPEN-NOTES', () => {
 
 
 exports.set_attr = set_attr;
+exports.show_notes = show_notes;

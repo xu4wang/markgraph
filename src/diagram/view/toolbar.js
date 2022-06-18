@@ -163,8 +163,8 @@ function exe_cb() {
     c.run(cmd.name, cmd.argv);
   }
 }
-function exe_home() {
-  m.reset();
+function exe_notes() {
+  explorer.show_notes();
 }
 
 function exe_index() {
@@ -228,7 +228,7 @@ function add_tools() {
   //exe active node
   //add button
   //remove button
-  add_button('__SYSTEM_HOME', 'Lobby', exe_home, false);  //false means not a user button.
+  add_button('__SYSTEM_HOME', 'Notes', exe_notes, false);  //false means not a user button.
   add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false);  //false means not a user button.
   add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
   add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.

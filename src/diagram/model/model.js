@@ -12,7 +12,7 @@ var notes_name = default_name;
 let config_file = 'diagram.system.configuration';
 
 //eslint-disable-next-line
-let default_b64 = 'eyJpbmRleCI6Ii0tLVxuc3R5bGU6IHt9XG5ub2RlczogW11cbmVkZ2VzOiBbXVxuLS0tXG5cblRoaXMgaXMgYW4gZW1wdHkgbm90ZXMuIiwiZGlhZ3JhbS5zeXN0ZW0uY29uZmlndXJhdGlvbiI6Ii0tLVxuc3R5bGU6IHt9XG5ub2RlczogW11cbmVkZ2VzOiBbXVxuYnV0dG9uczpcbiAgLSBicm93c2luZ1xuICAtIG5vdGUgdGFraW5nXG4gIC0gY2FudmFzIG9ubHlcbmtlZXA6XG4gIC0gZGlhZ3JhbS5zeXN0ZW0uY29uZmlndXJhdGlvblxuICAtIG5vdGUgdGFraW5nXG4gIC0gY2FudmFzIG9ubHlcbiAgLSBicm93c2luZ1xuLS0tXG5cbkNvbmZpZ3VyYXRpb24gRGF0YVxuIiwibm90ZSB0YWtpbmciOiItLS1cbm5hbWU6IG5vdGUgdGFraW5nXG5ub3RlOiBjb25maWdcbnN0eWxlOiB7fVxubm9kZXM6IFtdXG5lZGdlczogW11cbmNvbW1hbmRzOlxuICAtIG5hbWU6IHRoZW1lXG4gICAgYXJndjpcbiAgICAgIGV4cGxvcmVyOlxuICAgICAgICB3aWR0aDogMCVcbiAgICAgIGVkaXRvcjpcbiAgICAgICAgd2lkdGg6IDUwdndcbi0tLSIsImNhbnZhcyBvbmx5IjoiLS0tXG5ub3RlOiBjb25maWdcbnN0eWxlOiB7fVxubm9kZXM6IFtdXG5lZGdlczogW11cbmNvbW1hbmRzOlxuICAtIG5hbWU6IHRoZW1lXG4gICAgYXJndjpcbiAgICAgIGV4cGxvcmVyOlxuICAgICAgICB3aWR0aDogMCVcbiAgICAgIGVkaXRvcjpcbiAgICAgICAgd2lkdGg6IDAlXG4tLS1cblxuQ2FudmFzIE9ubHkgVmlldyIsImJyb3dzaW5nIjoiLS0tXG5ub3RlOiBjb25maWdcbnN0eWxlOiB7fVxubm9kZXM6IFtdXG5lZGdlczogW11cbmNvbW1hbmRzOlxuICAtIG5hbWU6IHRoZW1lXG4gICAgYXJndjpcbiAgICAgIGV4cGxvcmVyOlxuICAgICAgICB3aWR0aDogNTAlXG4gICAgICBlZGl0b3I6XG4gICAgICAgIHdpZHRoOiA1MCVcbi0tLVxuXG5DYW52YXMgT25seSBWaWV3In0=';
+let default_b64 = 'eyJpbmRleCI6Ii0tLVxuc3R5bGU6IHt9XG5ub2RlczogW11cbmVkZ2VzOiBbXVxuLS0tXG5cblRoaXMgaXMgYW4gZW1wdHkgbm90ZXMuIiwiZGlhZ3JhbS5zeXN0ZW0uY29uZmlndXJhdGlvbiI6Ii0tLVxuc3R5bGU6IHt9XG5ub2RlczogW11cbmVkZ2VzOiBbXVxuYnV0dG9uczogbnVsbFxua2VlcDpcbiAgLSBkaWFncmFtLnN5c3RlbS5jb25maWd1cmF0aW9uXG4tLS1cblxuQ29uZmlndXJhdGlvbiBEYXRhXG4ifQ==';
 
 
 store.init({
@@ -101,6 +101,7 @@ function _update_document(impacted, docs, name, content) {
   if (new_file_created) {
     store.emit('DOCUMENT-CREATE',  { impacted: name });
   }
+
   impacted = name;
   return { impacted: name, documents: docs };
 }
@@ -170,11 +171,13 @@ function get_document_body(id) {
 function set_active_document(name) {
   store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
   //check if it's a notes package???
+  /*
   if (localStorage.getItem(name) !== null) {
     //open the note pacakge named target_doc
     // eslint-disable-next-line no-use-before-define
     reset(name);
   }
+  */
 }
 
 function get_active_document() {
@@ -287,17 +290,6 @@ function set_config(key, value) {
 
 function rename_document(src, target) {
   store.emit('DOCUMENT-RENAME', (s) => {
-    if (localStorage.getItem(src) !== null) {
-      let v = localStorage.getItem(src);
-      if (target.charAt(0) !== '#') {
-        target = '#' + target;
-      }
-      localStorage.setItem(target, v);
-      if (src !== default_name) {
-        localStorage.removeItem(src); //always remove
-      }
-      //dialog.alert('Notes Pacakge ' + name + ' also renamed!');
-    }
     s.documents[target] = s.documents[src];
     let keep = get_common_attr(config_file, 'keep');
     if (keep instanceof Array) {
@@ -318,9 +310,6 @@ function delete_document(name) {
         delete s.documents[name];
         s.impacted = name;
       }
-    }
-    if (name !== default_name) {
-      localStorage.removeItem(name); //always remove
     }
     update_storage();
     return s;
@@ -402,10 +391,13 @@ function reset(name, b64) {
       notes_data = window.localStorage.getItem(name);
     }
   }
+
+  /*
   //make sure name starts with #
   if (notes_name.charAt(0) !== '#') {
     notes_name = '#' + notes_name;
   }
+  */
 
   //init and make sure notes_data is valid
   if (!init_from_permlink(notes_data)) {
@@ -420,6 +412,7 @@ function reset(name, b64) {
   }
 
   window.localStorage.setItem(notes_name, notes_data);
+  /*
   if (notes_name === default_name) {
     //add all notes to the default note
     for (let k of Object.keys(window.localStorage)) {
@@ -428,12 +421,50 @@ function reset(name, b64) {
       //}
     }
   }
+  */
+
   set_active_document(frontpage);
   store.emit('OPEN-NOTES', {});
 }
 
 function get_notes_name() {
   return notes_name;
+}
+
+
+
+function duplicate_notes(src, target) {
+  if (localStorage.getItem(src) !== null) {
+    let v = localStorage.getItem(src);
+    localStorage.setItem(target, v);
+  }
+  store.emit('DOCUMENT-UPDATE', {});
+}
+
+function new_notes(name) {
+  duplicate_notes(default_name, name);
+  store.emit('DOCUMENT-UPDATE', {});
+}
+
+function delete_notes(name) {
+  if (name !== default_name) {
+    localStorage.removeItem(name); //always remove
+  }
+  store.emit('DOCUMENT-DELETE', {});
+}
+
+function rename_notes(src, target) {
+  duplicate_notes(src, target);
+  delete_notes(src);
+  store.emit('DOCUMENT-RENAME', {});
+}
+
+function get_all_notes() {
+  let r = {};
+  for (let k of Object.keys(window.localStorage)) {
+    r[k] = 'Notes';
+  }
+  return r;
 }
 
 function is_notes(name) {
@@ -470,19 +501,23 @@ exports.reset_listener = store.reset_listener;
 exports.set_config = set_config;
 exports.get_config = get_config;
 
-exports.get_notes_name = get_notes_name;
-
 exports.format = format;
 
 exports.get_b64 = get_b64;
+
 exports.is_notes = is_notes;
+exports.new_notes = new_notes;
+exports.delete_notes = delete_notes;
+exports.rename_notes = rename_notes;
+exports.duplicate_notes = duplicate_notes;
+exports.get_notes_name = get_notes_name;
+exports.get_all_notes = get_all_notes;
 
 /* support EVENTS
 'ACTIVE-DOCUMENT'
 'DOCUMENT-UPDATE'
 "DOCUMENT-DELETE"
 "DOCUMENT-RENAME"
-"DOCUMENT-CREATE"
 ‘RESET’
 ‘OPEN-NOTES’
 STORAGE_UPDATE
