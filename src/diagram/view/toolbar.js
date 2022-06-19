@@ -183,6 +183,7 @@ function exe_show_hide(e, name, mod) {
   }
 }
 
+/*
 function exe_show_lock(e, name, mod) {
   if (target_state[name] === 'lock') {
     mod.lock(false);
@@ -194,6 +195,7 @@ function exe_show_lock(e, name, mod) {
     target_state[name] = 'lock';
   }
 }
+*/
 
 function exe_show_hide_lock(e, name, mod) {
   if (target_state[name] === 'hide') {
@@ -231,7 +233,7 @@ function add_tools() {
   add_button('__SYSTEM_HOME', 'Notes', exe_notes, false);  //false means not a user button.
   add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false);  //false means not a user button.
   add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
-  add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
+  add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_hide_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
   add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, false);  //false means not a user button.
   add_button('__SYSTEM_BACKWARD', '<-', exe_backward, 'button-user');  //false means not a user button.
   add_button('__SYSTEM_INDEX', 'Index', exe_index, 'button-user');  //false means not a user button.

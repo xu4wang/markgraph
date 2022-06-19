@@ -16,7 +16,6 @@ shell.cp('src/diagram/diagram.css', 'dist/');
 shell.cp('node_modules/codemirror/lib/codemirror.css', 'dist/');
 shell.cp('library/jsplumb/*', 'dist/');
 shell.cp('library/clusterize.js/*', 'dist/');
-shell.cp('library/toggle-switchy.css', 'dist/');
 shell.cp('library/sweetalert2.all.min.js', 'dist/');
 
 
