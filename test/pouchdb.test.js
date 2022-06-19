@@ -51,7 +51,7 @@ async function add_version(pouch, k, v) {
 }
 
 it('document post and get ', async () => {
-    let db = await new PouchDB('mydb');
+    let db = await new PouchDB('database/mydb');
     let r = await add_version(db, 'hello', {key: 'world'});
     let doc = await get_doc(db, 'hello');
     expect(doc.key).toBe('world');
@@ -59,7 +59,7 @@ it('document post and get ', async () => {
 });
 
 it('nested 2 level  ', async () => {
-    let db = await new PouchDB('mydb');
+    let db = await new PouchDB('database/mydb');
     let r = await add_version(db, 'hello', {l1: {l2: "value l2"}});
     let doc = await get_doc(db, 'hello');
     expect(doc.l1.l2).toBe('value l2');
@@ -67,7 +67,7 @@ it('nested 2 level  ', async () => {
 });
 
 it('nested 3 level ', async () => {
-    let db = await new PouchDB('mydb');
+    let db = await new PouchDB('database/mydb');
     let r = await add_version(db, 'hello', {l1: {l2: {l3:"value l3"}}});
     let doc = await get_doc(db, 'hello');
     expect(doc.l1.l2.l3).toBe('value l3');
@@ -75,29 +75,13 @@ it('nested 3 level ', async () => {
 });
 
 it('nested 4 level ', async () => {
-    let db = await new PouchDB('mydb');
+    let db = await new PouchDB('database/mydb');
     let r = await add_version(db, 'hello', {l1: {l2: {l31:"value l31", l32: {l4: "value l4"}}}});
     let doc = await get_doc(db, 'hello');
     expect(doc.l1.l2.l31).toBe('value l31');
     expect(doc.l1.l2.l32.l4).toBe('value l4');
     await db.close();
 });
-
-/*
-active________:    //for UNKNOWN reason, pouchdb cannot store/read nested objects?
-                   //as a workaround, put active_____ same level with all the doc versions.
-                   //ideally, should use a versions object to hold all the document's version.
-  docname1: latest version
-  docname2: latest version
-  ...
-docname1:
-  time1: ver1:
-  time2: ver2:
-    ...
-document2:
-  time1: ver1:
-    ...
-*/
 
 it('nested real case ', async () => {
     let data = {
@@ -111,7 +95,7 @@ it('nested real case ', async () => {
                   }
         }
                  
-    let db = await new PouchDB('mydb');
+    let db = await new PouchDB('database/mydb');
     let r = await add_version(db, 'hello', data);
     let doc = await get_doc(db, 'hello');
     expect(doc.active.name1).toBe('kkkk');

@@ -7,19 +7,18 @@ const docs_key = 'markgraph_docs';
 var pouch;
 var all_docs = {};
 /*
-active____:    //for UNKNOWN reason, pouchdb cannot store/read nested objects?
-                   //as a workaround, put active_ same level with all the doc versions.
-                   //ideally, should use a versions object to hold all the document's version.
+active:
   docname1: latest version
   docname2: latest version
   ...
-docname1:
-  time1: ver1:
-  time2: ver2:
-    ...
-document2:
-  time1: ver1:
-    ...
+versions:
+  docname1:
+    time1: ver1:
+    time2: ver2:
+      ...
+  document2:
+    time1: ver1:
+      ...
 */
 
 var docs_key_ver = '';
