@@ -231,10 +231,14 @@ async function exe_backup() {
   let d = m.get_all_notes();
   if (await tm.write(d) !== '') {
     dialog.alert('A new snapshot was added to the time machine!');
+  } else {
+    dialog.alert('Data not changed.');
   }
 }
 
 async function exe_restore() {
+  let yes = await dialog.confirm('Make sure backup first. Changes without backup will be lost!', 'Continue', 'Abort');
+  if (!yes) return;
   let d = await tm.versions();
   if (d.length > 0) {
     let s = await dialog.select(d);
