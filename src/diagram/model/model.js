@@ -3,6 +3,7 @@
 var jsyaml     = require('js-yaml');
 var base64     = require('./base64');
 var store      = require('./state');
+var storage     = require('./storage');
 
 const default_name = 'default_notes';
 const frontpage = 'index';
@@ -130,7 +131,7 @@ function build_doc() {
 
 function get_doc(name) {
   name = name || notes_name;
-  return window.localStorage.getItem(name);
+  return storage.get(name);
 }
 
 function get_b64() {
@@ -140,7 +141,7 @@ function get_b64() {
 function update_storage(name, data) {
   name = name || notes_name;
   data = data || build_doc();
-  window.localStorage.setItem(name, data);
+  storage.set(name, data);
   store.emit('STORAGE_UPDATE', {});
 }
 
@@ -177,7 +178,7 @@ function set_active_document(name) {
   store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
   //check if it's a notes package???
   /*
-  if (localStorage.getItem(name) !== null) {
+  if (storage.getItem(name) !== null) {
     //open the note pacakge named target_doc
     // eslint-disable-next-line no-use-before-define
     reset(name);
@@ -371,7 +372,7 @@ function format(hard) {
 
 1. ('', false) : open default notes
 2. ('name',false) : open name, if not available, init it using default b64 data.
-3. ('name', 'b64 data') : assign b64 data to name in localStorage, and open name.
+3. ('name', 'b64 data') : assign b64 data to name in storage, and open name.
 4. ('', 'b64 data') : allocate a name and assign b64 data, open it.
 
 */
@@ -390,7 +391,7 @@ function reset(name, b64) {
     } else {
       //case #1
       notes_name = default_name;  //use default name;
-      notes_data = window.localStorage.getItem(notes_name);
+      notes_data = storage.get(notes_name);
     }
   } else {
     //name is not blank, #2 or #3
@@ -398,7 +399,7 @@ function reset(name, b64) {
     if (b64) {
       notes_data = base64.decode(b64);
     } else {
-      notes_data = window.localStorage.getItem(name);
+      notes_data = storage.get(name);
     }
   }
 
@@ -415,7 +416,7 @@ function reset(name, b64) {
     set_config('keep', [ config_file ]);
   }
 
-  window.localStorage.setItem(notes_name, notes_data);
+  storage.set(notes_name, notes_data);
 
   set_active_document(frontpage);
   store.emit('OPEN-NOTES', {});
@@ -428,9 +429,9 @@ function get_notes_name() {
 
 
 function duplicate_notes(src, target) {
-  if (localStorage.getItem(src) !== null) {
-    let v = localStorage.getItem(src);
-    localStorage.setItem(target, v);
+  if (storage.get(src) !== null) {
+    let v = storage.get(src);
+    storage.set(target, v);
   }
   store.emit('DOCUMENT-UPDATE', {});
 }
@@ -442,7 +443,7 @@ function new_notes(name) {
 
 function delete_notes(name) {
   if (name !== default_name) {
-    localStorage.removeItem(name); //always remove
+    storage.del(name); //always remove
   }
   store.emit('DOCUMENT-DELETE', {});
 }
@@ -455,7 +456,7 @@ function rename_notes(src, target) {
 
 function get_all_notes_name() {
   let r = {};
-  for (let k of Object.keys(window.localStorage)) {
+  for (let k of storage.keys()) {
     if (k.charAt(0) !== '_') {  //exclude pounch db files
       r[k] = 'Notes';
     }
@@ -464,7 +465,7 @@ function get_all_notes_name() {
 }
 
 function is_notes(name) {
-  return localStorage.getItem(name) !== null;
+  return storage.get(name) !== null;
 }
 
 //in a dict
@@ -488,7 +489,7 @@ function get_all_notes() {
 
 function set_all_notes(data) {
   for (let n of Object.keys(get_all_notes_name())) {
-    localStorage.removeItem(n); //always remove
+    storage.del(n); //always remove
   }
   for (let n of Object.keys(data)) {
     update_storage(n, data[n]);
