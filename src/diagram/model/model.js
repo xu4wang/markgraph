@@ -4,7 +4,7 @@ var jsyaml     = require('js-yaml');
 var base64     = require('./base64');
 var store      = require('./state');
 
-const default_name = '#default_notes';
+const default_name = 'default_notes';
 const frontpage = 'index';
 
 var notes_name = default_name;
@@ -62,9 +62,16 @@ function get_documents() {
   return store.get_store().documents;
 }
 
-function _update_document(impacted, docs, name, content) {
+/*
+each doc has 2 attrs:
+
+body:  markdown part
+json:  front matter part in JSON
+
+*/
+
+function _update_document(docs, name, content) {
   //TODO need to check 'follow' attributes, prevent loop inherit
-  var new_file_created = false;
   var h;
 
   try {
@@ -74,14 +81,9 @@ function _update_document(impacted, docs, name, content) {
     h.__content = content;
   }
 
-  if (!docs[name]) {
-    //notify listener that a file was created
-    new_file_created = true;
-  }
-
   docs[name] = {
-    body: h.__content,
-    content: content
+    body: h.__content
+    //content: content
   };
 
   if (!h.style) {
@@ -95,14 +97,9 @@ function _update_document(impacted, docs, name, content) {
   }
 
   delete h.__content;
-  docs[name].error = false;
+  //docs[name].error = false;
   docs[name].json = h;   //...json.nodes = ['n1','n2',...]
 
-  if (new_file_created) {
-    store.emit('DOCUMENT-CREATE',  { impacted: name });
-  }
-
-  impacted = name;
   return { impacted: name, documents: docs };
 }
 
@@ -118,7 +115,7 @@ function get_document_content(id) {
   return '';
 }
 
-function build_permlink() {
+function build_doc() {
   //generate b64 data
   var obj = {};
   var documents = store.get_store().documents;
@@ -127,24 +124,32 @@ function build_permlink() {
       obj[el] = get_document_content(el);
     }
   }
-  var obj_str = JSON.stringify(obj);
-  return base64.encode(obj_str);
+  var obj_str = JSON.stringify(obj, null, '\t');
+  return obj_str;
 }
 
-
-function update_storage() {
-  window.localStorage.setItem(notes_name, build_permlink());
-  store.emit('STORAGE_UPDATE', {});
+function get_doc(name) {
+  name = name || notes_name;
+  return window.localStorage.getItem(name);
 }
 
 function get_b64() {
-  return window.localStorage.getItem(notes_name);
+  return base64.encode(get_doc());
 }
+
+function update_storage(name, data) {
+  name = name || notes_name;
+  data = data || build_doc();
+  window.localStorage.setItem(name, data);
+  store.emit('STORAGE_UPDATE', {});
+}
+
+
 
 //  store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
 function update_document(name, content) {
   name = String(name);
-  store.emit('DOCUMENT-UPDATE', ({ impacted, documents }) => (_update_document(impacted, documents, name, content)));
+  store.emit('DOCUMENT-UPDATE', ({ documents }) => (_update_document(documents, name, content)));
   update_storage();
 }
 
@@ -188,10 +193,15 @@ function get_impacted_document() {
   return store.get_store().impacted;
 }
 
-function get_document_obj(id) {
+function get_document_obj(id, create) {
   var documents = store.get_store().documents;
   if (!documents[id]) {
-    update_document(id, '');
+    //update_document(id, '');
+    if (create) {
+      update_document(id, '');
+    } else {
+      return {};
+    }
   }
   return documents[id].json;
 }
@@ -205,7 +215,7 @@ function update_attr(id, key, value) {
 }
 
 function set_common_attr(id, key, value) {
-  var obj = get_document_obj(id);
+  var obj = get_document_obj(id, true);
   obj[key] = value;
   update_storage();
 }
@@ -326,13 +336,13 @@ function allocation_name() {
   let current = new Date();
   let cDate = current.getFullYear() + '_' + (current.getMonth() + 1) + '_' + current.getDate();
   let cTime = current.getHours() + '_' + current.getMinutes() + '_' + current.getSeconds();
-  let dateTime = '#' + cDate + '_' + cTime;
+  let dateTime = cDate + '_' + cTime;
   return dateTime;
 }
 
-function init_from_permlink(b64) {
+function init_from_permlink(obj_str) {
   try {
-    var obj_str = base64.decode(b64);
+    //var obj_str = base64.decode(b64);
     var obj = JSON.parse(obj_str);
     if (obj) {
       for (let n in obj) {
@@ -376,7 +386,7 @@ function reset(name, b64) {
     if (b64) {
       //case #4
       notes_name = allocation_name();
-      notes_data = b64;
+      notes_data = base64.decode(b64);
     } else {
       //case #1
       notes_name = default_name;  //use default name;
@@ -386,22 +396,16 @@ function reset(name, b64) {
     //name is not blank, #2 or #3
     notes_name = name;
     if (b64) {
-      notes_data = b64;
+      notes_data = base64.decode(b64);
     } else {
       notes_data = window.localStorage.getItem(name);
     }
   }
 
-  /*
-  //make sure name starts with #
-  if (notes_name.charAt(0) !== '#') {
-    notes_name = '#' + notes_name;
-  }
-  */
 
   //init and make sure notes_data is valid
   if (!init_from_permlink(notes_data)) {
-    notes_data = default_b64;
+    notes_data = base64.decode(default_b64);
     init_from_permlink(notes_data);
   }
 
@@ -412,16 +416,6 @@ function reset(name, b64) {
   }
 
   window.localStorage.setItem(notes_name, notes_data);
-  /*
-  if (notes_name === default_name) {
-    //add all notes to the default note
-    for (let k of Object.keys(window.localStorage)) {
-      //if (k !== default_name) {
-      update_document(k, 'Click to Open Notes');
-      //}
-    }
-  }
-  */
 
   set_active_document(frontpage);
   store.emit('OPEN-NOTES', {});
@@ -459,10 +453,12 @@ function rename_notes(src, target) {
   store.emit('DOCUMENT-RENAME', {});
 }
 
-function get_all_notes() {
+function get_all_notes_name() {
   let r = {};
   for (let k of Object.keys(window.localStorage)) {
-    r[k] = 'Notes';
+    if (k.charAt(0) !== '_') {  //exclude pounch db files
+      r[k] = 'Notes';
+    }
   }
   return r;
 }
@@ -471,9 +467,37 @@ function is_notes(name) {
   return localStorage.getItem(name) !== null;
 }
 
+//in a dict
+/* each notes is one string. same as the b64 version without base64 encode.
+notes_name1: stringify({
+   doc_name1: markdown body with frontmatter, same as shown in editor
+   doc_name2: ...
+})
+notes_name2: stringify({
+   doc_name1: ...
+})
+
+*/
+function get_all_notes() {
+  let d = {};
+  for (let n of Object.keys(get_all_notes_name())) {
+    d[n] = get_doc(n);
+  }
+  return d;
+}
+
+function set_all_notes(data) {
+  for (let n of Object.keys(get_all_notes_name())) {
+    localStorage.removeItem(n); //always remove
+  }
+  for (let n of Object.keys(data)) {
+    update_storage(n, data[n]);
+  }
+  reset(notes_name);
+}
+
 exports.reset = reset;
-//exports.init_from_permlink = init_from_permlink;
-exports.build_permlink = build_permlink;
+exports.get_b64 = get_b64;
 
 exports.get_active_document = get_active_document;
 exports.set_active_document = set_active_document;
@@ -503,7 +527,7 @@ exports.get_config = get_config;
 
 exports.format = format;
 
-exports.get_b64 = get_b64;
+exports.get_doc = get_doc;
 
 exports.is_notes = is_notes;
 exports.new_notes = new_notes;
@@ -511,7 +535,19 @@ exports.delete_notes = delete_notes;
 exports.rename_notes = rename_notes;
 exports.duplicate_notes = duplicate_notes;
 exports.get_notes_name = get_notes_name;
-exports.get_all_notes = get_all_notes;
+exports.get_all_notes_name = get_all_notes_name;
+exports.get_all_notes = get_all_notes;  //in a dict
+exports.set_all_notes = set_all_notes;  //in a dict
+
+/*
+notes_name1:
+   doc_name1: ...
+   doc_name2: ...
+notes_name2:
+   doc_name1: ...
+   doc_name2: ...
+
+*/
 
 /* support EVENTS
 'ACTIVE-DOCUMENT'

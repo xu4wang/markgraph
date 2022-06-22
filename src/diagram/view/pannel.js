@@ -13,7 +13,11 @@ function open_document() {
       window.location.hash = m.get_notes_name();
     } else {
       //hash is notes name
-      m.reset(decodeURI(location.hash.toString()));
+      let name = decodeURI(location.hash.toString());
+      if (name.charAt(0) === '#') {
+        name = name.substring(1);
+      }
+      m.reset(name);
     }
   } else {
     m.reset();

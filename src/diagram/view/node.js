@@ -21,6 +21,8 @@ mdrenderer.use(markdownItImageSize);
 const { Remarkable } = require('remarkable');
 const { escapeHtml } = require('remarkable').utils;
 var md2html = new Remarkable();
+//const mermaid = require('mermaid');
+//const mermaidAPI = mermaid.mermaidAPI;
 
 var edge = require('./edges');
 
@@ -37,6 +39,17 @@ md2html.renderer.rules.image = (function () {
     return imgOutput;
   };
 })();
+
+/*
+md2html.renderer.rules.fence_custom['mermaid'] = function (tokens, index) {
+  var token = tokens[index];
+  var result;
+  mermaidAPI.render('id1', token.content, function (cbResult) {
+    result = cbResult;
+  });
+  return result;
+};
+*/
 
 function add_px(value) {
   if (!isNaN(parseFloat(value)) && isFinite(value)) {

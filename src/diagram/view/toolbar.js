@@ -21,6 +21,7 @@ let explorer = require('./explorer');
 let canvas = require('./canvas');
 let editor = require('./editor');
 let outline = require('./outline');
+let tm = require('../model/timemachine');
 
 const target_state_init = {
   explorer: 'show',        //show, hide
@@ -226,6 +227,35 @@ function exe_forward() {
   browse_history.pop();
 }
 
+async function exe_backup() {
+  let d = m.get_all_notes();
+  if (await tm.write(d) !== '') {
+    dialog.alert('A new snapshot was added to the time machine!');
+  }
+}
+
+async function exe_restore() {
+  let d = await tm.versions();
+  if (d.length > 0) {
+    let s = await dialog.select(d);
+    if (s.isConfirmed && s.value !== '') {
+      //restore s
+      let n = await tm.read(s.value);
+      m.set_all_notes(n);
+      dialog.alert(s.value + ' restored');
+    }
+  }
+  //console.log(d);
+}
+
+async function exe_share() {
+  await Swal.fire(
+    'Copy below URL to share',
+    window.location.href.replace(/#.*/, '#diag=' +  m.get_b64()),
+    'info'
+  );
+}
+
 function add_tools() {
   //exe active node
   //add button
@@ -233,11 +263,14 @@ function add_tools() {
   add_button('__SYSTEM_HOME', 'Notes', exe_notes, false);  //false means not a user button.
   add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false);  //false means not a user button.
   add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
-  add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_hide_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
-  add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, false);  //false means not a user button.
+  add_button('__SYSTEM_BACKUP', 'Backup', exe_backup, 'button-dark');  //false means not a user button.
+  add_button('__SYSTEM_RESTORE', 'Restore', exe_restore, 'button-dark');  //false means not a user button.
+  add_button('__SYSTEM_SHARE', 'Share', exe_share, 'button-system');  //false means not a user button.
   add_button('__SYSTEM_BACKWARD', '<-', exe_backward, 'button-user');  //false means not a user button.
   add_button('__SYSTEM_INDEX', 'Index', exe_index, 'button-user');  //false means not a user button.
   add_button('__SYSTEM_FORWARD', '->', exe_forward, 'button-user');  //false means not a user button.
+  add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_hide_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
+  add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, false);  //false means not a user button.
 
   //add_button('__SYSTEM_EXE', 'Execute', exe_cb, false);  //false means not a user button.
   //add_button('__SYSTEM_ADD', 'Add Button', add_cb, true);
@@ -326,6 +359,7 @@ function init(container) {
   container_ele.addEventListener('contextmenu', function (e) {
     menu.display(e);
   });
+  tm.init();
   return container_ele;
 }
 

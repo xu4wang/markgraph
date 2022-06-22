@@ -41,16 +41,30 @@ function clear_all_btn() {
   }
 }
 
+var display = 'block';
+
 function set_attr(name, val) {
   ele.style[name] = val;
+  if (name === 'display') {  //ugly hack for auto hide outline if there is no subnodes.
+    display = val;
+  }
 }
+
 
 function update_buttons() {
   if (!locked) {
     clear_all_btn();
     let nodes = m.get_subnode_names(canvas.get_currect_doc());
-    for (let n of nodes) {
-      add_button(n, n, 'button-outline');
+    if (nodes.length === 0) {
+      //auto hide
+      //display = ele.style['display'];
+      //set_attr('display', 'none');
+      ele.style['display'] = 'none';
+    } else {
+      set_attr('display', display);
+      for (let n of nodes) {
+        add_button(n, n, 'button-outline');
+      }
     }
   }
 }

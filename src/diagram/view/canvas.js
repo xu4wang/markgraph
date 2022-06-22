@@ -2,6 +2,7 @@
 
 var m = require('../model/model');
 var node = require('./node');
+var editor = require('./editor');
 
 var ele = document.getElementById('dst');
 
@@ -94,6 +95,14 @@ m.on('DOCUMENT-UPDATE', ({ impacted }) => {
 
 function set_attr(name, val) {
   ele.style[name] = val;
+  //if hide canvas， make editor 100% width
+  if (name === 'display') {
+    if (val === 'none') {
+      editor.set_attr('width', '100%');
+    } else {
+      editor.set_attr('width', '500px');
+    }
+  }
 }
 
 function lock(status) {

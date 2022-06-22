@@ -29,7 +29,7 @@ it('document can be saved and read, get common attr ', () => {
     var dat ='hello data';
     m.update_document('hello', dat);
     var d = m.get_documents();
-    expect(d['hello']['content']).toBe('hello data');
+    expect(d['hello']['body']).toBe('hello data');
     expect(d['hello']['json']['style']).toEqual({});
     dat =`---
 age: 127
@@ -44,7 +44,7 @@ pets:
 Some Other content`;
     m.update_document('hello', dat);
     d = m.get_documents();
-    expect(d['hello']['content']).toBe(dat);
+   // expect(d['hello']['body']).toBe(dat);
     expect(d['hello']['json'].age).toBe(127);
     expect(m.get_document_body('hello')).toBe('\nSome Other content');
     expect(m.get_common_attr('hello','age')).toBe(127);
@@ -83,7 +83,7 @@ edges:
     m.update_document('hello', dat);
     var d = m.get_documents();
     expect(d['hello']['json']['nodes']).toContain('n4');
-    expect(d['hello']['error']).toBe(false);
+    //expect(d['hello']['error']).toBe(false);
     d = m.get_subnode_names('hello');
     expect(d).toContain('n1');
 });
@@ -124,7 +124,7 @@ edges:
 ---`;
     m.update_document('hello', dat);
     var d = m.get_documents();
-    expect(d['hello']['error']).toBe(false);
+    //expect(d['hello']['error']).toBe(false);
     expect(m.get_edges('hello')[0]['from']).toBe('n1');
     dat =`---
 top: 200px
@@ -157,11 +157,11 @@ edges:
 ---`;
     m.update_document('hello', dat);
     var d = m.get_documents();
-    expect(d['hello']['error']).toBe(false);
+    //expect(d['hello']['error']).toBe(false);
     m.update_document('n1','Hello n1');
     m.update_document('n2','Hello n2');
     m.update_document('n4','Hello n4');
-    var b64 = m.build_permlink();
+    var b64 = m.get_b64();
     //console.log(window.diagram_documents)
     //console.log(b64);
     m.reset('',b64);
@@ -182,7 +182,7 @@ style:
 body text`;
     m.update_document('n1',dat);
     m.update_attr('n1','top','kkkk');
-    var b64 = m.build_permlink();
+    var b64 = m.get_b64();
     m.reset('',b64);
     expect(m.get_attr('n1','top')).toBe('kkkk');
 });
@@ -222,7 +222,7 @@ edges:
 ---`;
     m.update_document('hello', dat);
     var d = m.get_documents();
-    expect(d['hello']['error']).toBe(false);
+    //expect(d['hello']['error']).toBe(false);
     m.update_document('n1','Hello n1');
     m.update_document('n2','Hello n2');
     m.update_document('n4','Hello n4');
@@ -261,7 +261,7 @@ edges:
 
     m.update_document('hello', dat);
     var d = m.get_documents();
-    expect(d['hello']['error']).toBe(false);
+    //expect(d['hello']['error']).toBe(false);
     var names;
     names = m.get_all_names();
     expect(!('n1' in names)).toBeTruthy();
@@ -345,26 +345,6 @@ Some Other content`;
     m.update_document('hello', dat);
 });
 
-it('document create listener ', () => {
-    m.format(true);
-
-    m.reset();
-    m.on("DOCUMENT-CREATE", ({ documents }) => {
-        expect(documents.hello.json.age).toBe(127);
-    });
-    var dat =`---
-age: 127
-contact:
-    email: email@domain.com
-    address: some location
-pets:
-    - cat
-    - dog
-    - bat
----
-Some Other content`;
-    m.update_document('hello', dat);
-});
 
 it('document delete listener ', () => {
     m.format(true);

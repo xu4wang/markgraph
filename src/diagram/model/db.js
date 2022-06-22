@@ -1,6 +1,7 @@
 'use strict';
 
-var PouchDB = require('PouchDB');
+var Pouchdb = require('PouchDB').default;  //for browser
+//var Pouchdb = require('PouchDB')  //for node
 
 const db_name = 'markgraph';
 const docs_key = 'markgraph_docs';
@@ -145,7 +146,7 @@ function list_doc() {
 }
 
 async function init() {
-  pouch = await new PouchDB(db_name);
+  pouch = await new Pouchdb(db_name);
   let r = await _get_doc(docs_key);
   if (r._rev) {
     docs_key_ver = r._rev;

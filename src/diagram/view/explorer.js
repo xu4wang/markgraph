@@ -25,7 +25,7 @@ function build_data() {
   rows = [];
   var names = m.get_all_names();
   if (notes_mode) {
-    names = m.get_all_notes();
+    names = m.get_all_notes_name();
   } else {
     names = m.get_all_names();
   }
