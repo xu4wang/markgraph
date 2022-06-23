@@ -26,5 +26,5 @@ function keys() {
 
 exports.set = set;
 exports.get = get;
-exports.delete = del;
+exports.del = del;
 exports.keys = keys;
