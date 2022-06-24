@@ -8,7 +8,8 @@ var rows = [];
 var search = document.getElementById('search');
 var ele = document.getElementById('explorer_container');
 var dialog = require('./dialog');
-
+let fe = require('./filexchange');
+let tm = require('../model/timemachine');
 
 /* Fill array with data
  * Fields:
@@ -185,6 +186,32 @@ var cmen = [
   },
   {
     type: cmenu.ContextMenu.DIVIDER
+  },
+  {
+    text: 'Export Snapshot (in json format)',
+    events: {
+      click: function () {
+        let d = m.get_all_notes();
+        fe.export_json('markgraph', d);
+      }
+    }
+  },
+  {
+    text: 'Import a Snapshot file',
+    events: {
+      click: async function () {
+        let d = await fe.import_json();
+        if (d) {
+          if (await tm.write(d) !== '') {
+            dialog.alert('A new snapshot was added to the time machine!');
+          } else {
+            dialog.alert('Data not changed.');
+          }
+        } else {
+          dialog.alert('Wrong data format?');
+        }
+      }
+    }
   }
   /*,
   {

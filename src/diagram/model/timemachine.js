@@ -26,6 +26,10 @@ async function versions() {
   return v;
 }
 
+async function compact() {
+  let v = await pdb.compact();
+  console.log(v);
+}
 async function close() {
   await pdb.close();
   //await pouch.destroy();
@@ -36,3 +40,4 @@ exports.read = read;
 exports.write = write;
 exports.versions = versions;
 exports.close = close;
+exports.compact = compact;

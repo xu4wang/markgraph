@@ -63,6 +63,24 @@ it('tm add version ', async () => {
     expect(JSON.stringify(r3) === JSON.stringify(r5)).toBe(true);
 });
 
+it('tm compress', async () => {
+    var doc = {
+        f1: "hello world",
+        f2: Math.random()
+      }
+
+    let r0 = await tm.read();
+
+    let version1 = await tm.versions();
+    let r1 = await tm.write(doc);
+    expect(r1 === '').toBe(false);
+    let version2 = await tm.versions();
+    expect(version2.length === version1.length + 1).toBe(true);
+    await tm.compact();
+    let version3 = await tm.versions();
+    expect(version3.length).toBe(1);
+});
+
 afterAll(async () => {
     await tm.close();
 });

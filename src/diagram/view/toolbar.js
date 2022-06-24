@@ -13,6 +13,8 @@ Whenever a document is updated,
 when event hanppens, invoke related node by calling commands.js
 */
 
+//var jsyaml     = require('js-yaml');
+
 var m = require('../model/model');
 var c = require('./commands.js');
 var cmenu = require('./contextmenu');
@@ -328,6 +330,15 @@ var cmen = [
       click: function () {
         //var target = e.target;
         exe_cb();
+      }
+    }
+  },
+  {
+    text: 'Clear History Snapshot',
+    events: {
+      click: async function () {
+        await tm.compact();
+        dialog.alert('History Snapshots cleared!');
       }
     }
   }

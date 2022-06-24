@@ -1,7 +1,7 @@
 'use strict';
 
 var Pouchdb = require('PouchDB').default;  //for browser
-//var Pouchdb = require('PouchDB')  //for node
+//var Pouchdb = require('PouchDB'); //for node
 
 const db_name = 'markgraph';
 const docs_key = 'markgraph_docs';
@@ -92,6 +92,19 @@ async function update_doc(k, v) {
   return all_docs.active[k];
 }
 
+async function compact() {
+  let v = await pouch.compact();
+  all_docs.versions = {};
+  let t = current_time_str();
+  for (let k of Object.keys(all_docs.active)) {
+    all_docs.versions[k] = {};
+    t = '0-' + t;
+    all_docs.versions[k][t] = all_docs.active[k];
+  }
+  await update_doc_list();
+  return v;
+}
+
 async function read_doc(k, ver) {
   if (ver) {
     ver = all_docs.versions[k][ver];
@@ -172,3 +185,4 @@ exports.list_doc = list_doc;
 exports.init = init;
 exports.close = close;
 exports.get_versions = get_versions;
+exports.compact = compact;

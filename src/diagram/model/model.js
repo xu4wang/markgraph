@@ -125,7 +125,7 @@ function build_doc() {
       obj[el] = get_document_content(el);
     }
   }
-  var obj_str = JSON.stringify(obj, null, '\t');
+  var obj_str = JSON.stringify(obj);
   return obj_str;
 }
 
