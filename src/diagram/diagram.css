@@ -355,12 +355,12 @@ input{
   font-family: Inter,sans-serif;
   font-size: 12px;
   font-weight: 700;
-  justify-content: center;
+  justify-content: left;
   line-height: 1;
   margin: 0;
   outline: none;
   padding: 0.5rem 0.5rem;
-  text-align: center;
+  text-align: left;
   text-decoration: none;
   transition: box-shadow .2s,-webkit-box-shadow .2s;
   white-space: nowrap;

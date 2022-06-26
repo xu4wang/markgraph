@@ -88,7 +88,7 @@ function btn_listener(e) {
   }
 }
 
-function add_button(name, label, cb, classname) {
+function add_button(name, label, cb, classname, init_clicks) {
   //add button DOM and listener
   name += '__TOOLBAR__';
   classname = classname || 'button-system';
@@ -100,6 +100,10 @@ function add_button(name, label, cb, classname) {
     childNode.id = name;
     container_ele.appendChild(childNode);
     childNode.addEventListener('click', cb);
+    init_clicks = init_clicks || 0;
+    for (let k = 0; k < init_clicks;  k++) {
+      childNode.click();
+    }
   }
 }
 
@@ -267,8 +271,8 @@ function add_tools() {
   //add button
   //remove button
   add_button('__SYSTEM_HOME', 'Notes', exe_notes, false);  //false means not a user button.
-  add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false);  //false means not a user button.
-  add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
+  add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false, 1);  //false means not a user button.
+  add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false, 1);  //false means not a user button.
   add_button('__SYSTEM_BACKUP', 'Backup', exe_backup, 'button-dark');  //false means not a user button.
   add_button('__SYSTEM_RESTORE', 'Restore', exe_restore, 'button-dark');  //false means not a user button.
   add_button('__SYSTEM_SHARE', 'Share', exe_share, 'button-system');  //false means not a user button.

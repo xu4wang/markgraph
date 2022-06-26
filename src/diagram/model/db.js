@@ -83,7 +83,8 @@ function current_time_str() {
 
 
 async function update_doc(k, v) {
-  all_docs.active[k] = await add_version(k, v, all_docs.active[k]);
+  //all_docs.active[k] = await add_version(k, v, all_docs.active[k]);
+  all_docs.active[k] = await add_version(k, v);
   let t = current_time_str();
   all_docs.versions[k] = all_docs.versions[k] || {};
   t = Object.keys(all_docs.versions[k]).length + '-' + t;

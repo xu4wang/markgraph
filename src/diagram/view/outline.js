@@ -1,7 +1,7 @@
 'use strict';
 
 var m = require('../model/model');
-let canvas = require('./canvas');
+//let canvas = require('./canvas');
 
 //var cmenu = require('./contextmenu');
 
@@ -14,7 +14,8 @@ let locked = false;
 let is_locked = false;
 
 function cb(e) {
-  let id =  e.target.innerHTML;
+  let id =  e.target.id;
+  id = id.substring(0, id.length - '__OUTLINE__'.length);
   m.set_active_document(id);
 }
 
@@ -41,20 +42,28 @@ function clear_all_btn() {
   }
 }
 
-var display = 'block';
+//var display = 'block';
 
 function set_attr(name, val) {
   ele.style[name] = val;
+  /*
   if (name === 'display') {  //ugly hack for auto hide outline if there is no subnodes.
     display = val;
   }
+  */
 }
 
 
 function update_buttons() {
   if (!locked) {
-    clear_all_btn();
-    let nodes = m.get_subnode_names(canvas.get_currect_doc());
+    let nodes = m.get_outline();
+    if (Object.keys(nodes).length !== 0) {  //only change outline if current doc has it.
+      clear_all_btn();
+      for (let n of Object.keys(nodes)) {
+        add_button(n, nodes[n], 'button-outline');
+      }
+    }
+    /*
     if (nodes.length === 0) {
       //auto hide
       //display = ele.style['display'];
@@ -66,6 +75,7 @@ function update_buttons() {
         add_button(n, n, 'button-outline');
       }
     }
+    */
   }
 }
 
@@ -83,6 +93,10 @@ m.on('ACTIVE-DOCUMENT', () => {
   if (!is_locked) {
     update_buttons();
   }
+});
+
+m.on('OPEN-NOTES', () => {
+  clear_all_btn();
 });
 
 exports.set_attr = set_attr;
