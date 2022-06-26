@@ -52,11 +52,11 @@ Outline
 
 Please find below some screen capture of the manual.
 
-![](doc/architecture.jpg)
-![](doc/tasks.jpg)
-![](doc/markgraph.jpg)
-![](doc/mermaid.jpg)
-![](doc/import.jpg)
-![](doc/share.jpg)
+![architecture](doc/architecture.jpg)
+![tasks](doc/tasks.jpg)
+![markgraph](doc/markgraph.jpg)
+![mermaid](doc/mermaid.jpg)
+![import](doc/import.jpg)
+![share](doc/share.jpg)
 
 
