@@ -32,30 +32,38 @@ const target_state_init = {
   outline: 'show'          //show, hide, locked
 };
 
-let browse_history = [ 'index' ];
+let browse_history = [];
 let current_file = 0;
 
+let bookmark = {};
+
 function add_to_list(name) {
-  browse_history.push(name);
+  browse_history.push([ name, m.get_notes_name() ]);
   if (browse_history.length > 100) browse_history.shift();
-  //current_file = browse_history.length - 1;
+  current_file = browse_history.length - 1;
 }
 
 function previous() {
   current_file -= 1;
-  if (current_file < 0) current_file = 0;
+  if (current_file < 0) {
+    current_file = 0;
+    return false;
+  }
   return browse_history.at(current_file);
 }
 
 function next() {
   current_file += 1;
-  if (current_file === browse_history.length) current_file = browse_history.length - 1;
+  if (current_file === browse_history.length) {
+    current_file = browse_history.length - 1;
+    return false;
+  }
   return browse_history.at(current_file);
 }
 
 function reset_history() {
-  browse_history = [ 'index' ];
-  current_file = 0;
+  //browse_history = [ 'index' ];
+  //current_file = 0;
 }
 
 let target_state = Object.assign({}, target_state_init);
@@ -83,8 +91,8 @@ function btn_listener(e) {
     for (let cmd of cmds) {
       c.run(cmd.name, cmd.argv);
     }
-  } else if (m.document_available(id)) {
-    m.set_active_document(id);
+  } else {
+    m.set_active_document(id, bookmark[id]);
   }
 }
 
@@ -125,10 +133,12 @@ function rm_cb(name) {
     let e = document.getElementById(name);
     e.remove();
     //e.parentNode.removeChild(e);
-    let conf = m.get_config('buttons') || [];
-    conf = conf.filter(function (e) {
+    let conf = m.get_config('buttons') || {};
+    /*conf = conf.filter(function (e) {
       return e !== org_name;
     });
+    */
+    delete conf[org_name];
     m.set_config('buttons', conf);
   }
 }
@@ -147,9 +157,10 @@ function clear_all_cb() {
 function add_cb() {
   //create new button, add current node as listener
   let name = m.get_active_document();
+  bookmark[name] = m.get_notes_name();
   add_button(name, name, btn_listener, 'button-user');
-  let conf = m.get_config('buttons') || [];
-  conf.push(name);
+  let conf = m.get_config('buttons') || {};
+  conf[name] = bookmark[name];
   m.set_config('buttons', conf);
 }
 
@@ -224,13 +235,21 @@ function exe_show_hide_lock(e, name, mod) {
 }
 
 function exe_backward() {
-  m.set_active_document(previous());
+  let d = previous();
+  if (!d) return;
+  let c = current_file;
+  m.set_active_document(d[0], d[1]);
   browse_history.pop();
+  current_file = c;
 }
 
 function exe_forward() {
-  m.set_active_document(next());
+  let d = next();
+  if (!d) return;
+  let c = current_file;
+  m.set_active_document(d[0], d[1]);
   browse_history.pop();
+  current_file = c;
 }
 
 async function exe_backup() {
@@ -271,8 +290,8 @@ function add_tools() {
   //add button
   //remove button
   add_button('__SYSTEM_HOME', 'Notes', exe_notes, false);  //false means not a user button.
-  add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false, 1);  //false means not a user button.
-  add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false, 1);  //false means not a user button.
+  add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false);  //false means not a user button.
+  add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
   add_button('__SYSTEM_BACKUP', 'Backup', exe_backup, 'button-dark');  //false means not a user button.
   add_button('__SYSTEM_RESTORE', 'Restore', exe_restore, 'button-dark');  //false means not a user button.
   add_button('__SYSTEM_SHARE', 'Share', exe_share, 'button-system');  //false means not a user button.
@@ -289,9 +308,10 @@ function add_tools() {
 
 function config() {
   //add buttons based on document 'diagram.config'
-  let conf = m.get_config('buttons') || [];
-  for (let b of conf) {
-    add_button(b, b, btn_listener, 'button-dark');
+  let conf = m.get_config('buttons') || {};
+  for (let b of Object.keys(conf)) {
+    bookmark[b] = conf[b];
+    add_button(b, b, btn_listener, 'button-user');
   }
 }
 

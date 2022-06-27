@@ -36,6 +36,7 @@ function node_selected(p) {
   //source.setValue(m.get_document_content(p.id));
 }
 
+
 function init() {
   //it will be updated automatically. by the timer.
   var canvas = document.getElementById('canvas');
@@ -63,6 +64,20 @@ function init() {
     window.j.bind(jsPlumbBrowserUI.EVENT_ELEMENT_DBL_CLICK, (p) => {
       node_selected(p);
     });
+  });
+
+  canvas.addEventListener('click', function (e) {
+    if (e.ctrlKey || e.metaKey) {
+      if (e.target.href) {
+        let h = e.target.href;
+        if (h.startsWith(window.location.origin + window.location.pathname) && e.target.hash === '') {
+          e.preventDefault();
+          let notes = e.target.pathname.substring(window.location.pathname.length);
+          m.set_active_document(e.target.text, notes);
+        }
+        return;
+      }
+    }
   });
 }
 

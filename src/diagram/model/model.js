@@ -174,7 +174,11 @@ function get_document_body(id) {
   return '';
 }
 
-function set_active_document(name) {
+function set_active_document(name, notes) {
+  if (notes && notes !== '' && notes !== notes_name) {
+    // eslint-disable-next-line no-use-before-define
+    _reset(notes);
+  }
   store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
   //check if it's a notes package???
   /*
@@ -386,7 +390,7 @@ function format(hard) {
 4. ('', 'b64 data') : allocate a name and assign b64 data, open it.
 
 */
-function reset(name, b64) {
+function _reset(name, b64) {
   let notes_data = '';
   store.emit('RESET', {});
   format();
@@ -427,9 +431,12 @@ function reset(name, b64) {
   }
 
   storage.set(notes_name, notes_data);
-
-  set_active_document(frontpage);
   store.emit('OPEN-NOTES', {});
+}
+
+function reset(name, b64) {
+  _reset(name, b64);
+  set_active_document(frontpage);
 }
 
 function get_notes_name() {
