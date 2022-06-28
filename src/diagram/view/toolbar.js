@@ -308,7 +308,7 @@ function config() {
   let conf = m.get_config('buttons') || {};
   for (let b of Object.keys(conf)) {
     bookmark[b] = conf[b];
-    add_button(b, b, btn_listener, 'button-user');
+    add_button(b, b + '@' + conf[b], btn_listener, 'button-user');
   }
 }
 
