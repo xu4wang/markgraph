@@ -35,7 +35,7 @@ const target_state_init = {
 let browse_history = [];
 let current_file = 0;
 
-let bookmark = {};
+let bookmark = {};   //a dict {document name: notes name}
 
 function add_to_list(name) {
   browse_history.push([ name, m.get_notes_name() ]);
@@ -61,10 +61,12 @@ function next() {
   return browse_history.at(current_file);
 }
 
+/*
 function reset_history() {
   //browse_history = [ 'index' ];
   //current_file = 0;
 }
+*/
 
 let target_state = Object.assign({}, target_state_init);
 
@@ -96,10 +98,9 @@ function btn_listener(e) {
   }
 }
 
-function add_button(name, label, cb, classname, init_clicks) {
+function add_button(name, label, cb, classname) {
   //add button DOM and listener
   name += '__TOOLBAR__';
-  classname = classname || 'button-system';
   if (!widgets.has(name)) {
     widgets.add(name);
     var childNode = document.createElement('button');
@@ -108,10 +109,6 @@ function add_button(name, label, cb, classname, init_clicks) {
     childNode.id = name;
     container_ele.appendChild(childNode);
     childNode.addEventListener('click', cb);
-    init_clicks = init_clicks || 0;
-    for (let k = 0; k < init_clicks;  k++) {
-      childNode.click();
-    }
   }
 }
 
@@ -143,19 +140,18 @@ function rm_cb(name) {
   }
 }
 
-function clear_all_cb() {
+function clear_all_btn() {
   for (let name of widgets) {
     widgets.delete(name);
     //remove widget name from DOM
-    //name = name.substring(0, name.length - '__TOOLBAR__'.length);
     let e = document.getElementById(name);
     e.remove();
-    //e.parentNode.removeChild(e);
   }
 }
 
 function add_cb() {
   //create new button, add current node as listener
+  //this is the callback for menu item bookmark a note
   let name = m.get_active_document();
   bookmark[name] = m.get_notes_name();
   add_button(name, name, btn_listener, 'button-user');
@@ -165,6 +161,7 @@ function add_cb() {
 }
 
 function cleanup() {
+  //remove all buttons whose name is not a node in current notes.
   let names = m.get_all_names();
   for (let id of widgets) {
     id = id.substring(0, id.length - '__TOOLBAR__'.length);
@@ -289,19 +286,19 @@ function add_tools() {
   //exe active node
   //add button
   //remove button
-  add_button('__SYSTEM_HOME', 'Notes', exe_notes, false);  //false means not a user button.
-  add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, false);  //false means not a user button.
-  add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, false);  //false means not a user button.
-  add_button('__SYSTEM_BACKUP', 'Backup', exe_backup, 'button-dark');  //false means not a user button.
-  add_button('__SYSTEM_RESTORE', 'Restore', exe_restore, 'button-dark');  //false means not a user button.
-  add_button('__SYSTEM_SHARE', 'Share', exe_share, 'button-system');  //false means not a user button.
-  add_button('__SYSTEM_BACKWARD', '<-', exe_backward, 'button-user');  //false means not a user button.
-  add_button('__SYSTEM_INDEX', 'Index', exe_index, 'button-user');  //false means not a user button.
-  add_button('__SYSTEM_FORWARD', '->', exe_forward, 'button-user');  //false means not a user button.
-  add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_hide_lock(e, 'canvas',  canvas); }, false);  //false means not a user button.
-  add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, false);  //false means not a user button.
+  add_button('__SYSTEM_HOME', 'Notes', exe_notes, 'button-system');
+  add_button('__SYSTEM_EXPLORER', 'Explorer', function (e) { exe_show_hide(e, 'explorer', explorer); }, 'button-system');
+  add_button('__SYSTEM_EDITOR', 'Editor', function (e) { exe_show_hide(e, 'editor',  editor); }, 'button-system');
+  add_button('__SYSTEM_BACKUP', 'Backup', exe_backup, 'button-dark');
+  add_button('__SYSTEM_RESTORE', 'Restore', exe_restore, 'button-dark');
+  add_button('__SYSTEM_SHARE', 'Share', exe_share, 'button-system');
+  add_button('__SYSTEM_BACKWARD', '<-', exe_backward, 'button-user');
+  add_button('__SYSTEM_INDEX', 'Index', exe_index, 'button-user');
+  add_button('__SYSTEM_FORWARD', '->', exe_forward, 'button-user');
+  add_button('__SYSTEM_CANVAS', 'Canvas', function (e) { exe_show_hide_lock(e, 'canvas',  canvas); }, 'button-system');
+  add_button('__SYSTEM_OUTLINE', 'Outline', function (e) { exe_show_hide_lock(e, 'outline',  outline); }, 'button-system');
 
-  //add_button('__SYSTEM_EXE', 'Execute', exe_cb, false);  //false means not a user button.
+  //add_button('__SYSTEM_EXE', 'Execute', exe_cb, false);  storage
   //add_button('__SYSTEM_ADD', 'Add Button', add_cb, true);
   //add_button('__SYSTEM_REMOVE', 'Remove Button', rm_cb, true);
 }
@@ -314,8 +311,6 @@ function config() {
     add_button(b, b, btn_listener, 'button-user');
   }
 }
-
-
 
 var menu;
 var cmen = [
@@ -385,8 +380,8 @@ function init(container) {
 
   //init internal data
   target_state = Object.assign({}, target_state_init);
-  clear_all_cb();
-  widgets = new Set();
+  clear_all_btn();
+  //widgets = new Set();
   canvas.lock(false);
   outline.lock(false);
   explorer.set_attr('display', 'block');
@@ -413,12 +408,11 @@ m.on('ACTIVE-DOCUMENT', () => {
 });
 
 m.on('OPEN-NOTES', () => {
-  init('toolbar');
   config();
   notes_name_ele.innerHTML = m.get_notes_name();
   //change hash
   window.location.hash = m.get_notes_name();
-  reset_history();
+  //reset_history();
 });
 
 m.on('STORAGE_UPDATE', () => {
