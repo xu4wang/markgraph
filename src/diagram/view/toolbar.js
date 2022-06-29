@@ -35,8 +35,6 @@ const target_state_init = {
 let browse_history = [];
 let current_file = 0;
 
-let bookmark = {};   //a dict {document name: notes name}
-
 function add_to_list(name) {
   browse_history.push([ name, m.get_notes_name() ]);
   if (browse_history.length > 100) browse_history.shift();
@@ -88,13 +86,17 @@ function btn_listener(e) {
   let id = e.target.id;
   //call commands
   id = id.substring(0, id.length - '__TOOLBAR__'.length);
-  let cmds = m.get_common_attr(id, 'commands');
-  if (cmds) {
-    for (let cmd of cmds) {
-      c.run(cmd.name, cmd.argv);
+  let name_notes = id.split('@');
+  if (name_notes[1]) {
+    //we have notes name
+    let cmds = m.get_common_attr(name_notes[0], 'commands');
+    if (cmds) {
+      for (let cmd of cmds) {
+        c.run(cmd.name, cmd.argv);
+      }
+    } else {
+      m.set_active_document(name_notes[0], name_notes[1]);
     }
-  } else {
-    m.set_active_document(id, bookmark[id]);
   }
 }
 
@@ -121,7 +123,9 @@ let bigCities = cities.filter(function (e) {
 
 function rm_cb(name) {
   name = name || m.get_active_document();
+  let notesname = m.get_notes_name();
   let org_name = name;
+  name = name + '@' + notesname;
   name += '__TOOLBAR__';
   if (widgets.has(name)) {
     widgets.delete(name);
@@ -140,6 +144,7 @@ function rm_cb(name) {
   }
 }
 
+/*
 function clear_all_btn() {
   for (let name of widgets) {
     widgets.delete(name);
@@ -148,15 +153,16 @@ function clear_all_btn() {
     e.remove();
   }
 }
+*/
 
 function add_cb() {
   //create new button, add current node as listener
   //this is the callback for menu item bookmark a note
   let name = m.get_active_document();
-  bookmark[name] = m.get_notes_name();
-  add_button(name, name, btn_listener, 'button-user');
+  let notesname = m.get_notes_name();
+  add_button(name + '@' + notesname, name + '@' + notesname, btn_listener, 'button-bookmark');
   let conf = m.get_config('buttons') || {};
-  conf[name] = bookmark[name];
+  conf[name] = notesname;
   m.set_config('buttons', conf);
 }
 
@@ -307,8 +313,7 @@ function config() {
   //add buttons based on document 'diagram.config'
   let conf = m.get_config('buttons') || {};
   for (let b of Object.keys(conf)) {
-    bookmark[b] = conf[b];
-    add_button(b, b + '@' + conf[b], btn_listener, 'button-user');
+    add_button(b + '@' + conf[b], b + '@' + conf[b], btn_listener, 'button-bookmark');
   }
 }
 
@@ -380,7 +385,7 @@ function init(container) {
 
   //init internal data
   target_state = Object.assign({}, target_state_init);
-  clear_all_btn();
+  //clear_all_btn();
   //widgets = new Set();
   canvas.lock(false);
   outline.lock(false);

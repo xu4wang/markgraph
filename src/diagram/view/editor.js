@@ -44,6 +44,15 @@ m.on('ACTIVE-DOCUMENT', ({ active }) => {
   source.setValue(m.get_document_content(active));
 });
 
+
+/*
+m.on('DOCUMENT-UPDATE', ({ active, impacted }) => {
+  if (active === impacted) {
+    source.setValue(m.get_document_content(active));
+  }
+});
+*/
+
 function set_attr(name, val) {
   ele.style[name] = val;
 }

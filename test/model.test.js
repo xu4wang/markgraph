@@ -407,3 +407,19 @@ it('docu available ', () => {
     m.delete_document('hello1');
     expect(!(m.document_available('hello1'))).toBeTruthy();
 });
+
+it('append doc, same notes', () => {
+    m.format(true);
+
+    m.update_document('hello1', 'hello');
+    m.append_document('hello1',' world');
+    expect(m.get_document_body('hello1')).toBe('hello world');
+});
+
+it('append doc, same notes', () => {
+    m.format(true);
+
+    m.update_document('hello1', 'hello');
+    m.append_document('hello1',' world');
+    expect(m.get_document_body('hello1')).toBe('hello world');
+});

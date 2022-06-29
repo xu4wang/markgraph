@@ -6,21 +6,6 @@ function alert(msg) {
   Swal.fire(msg);
 }
 
-/*
-const { value: text } = await Swal.fire({
-  input: 'textarea',
-  inputLabel: 'Message',
-  inputPlaceholder: 'Type your message here...',
-  inputAttributes: {
-    'aria-label': 'Type your message here'
-  },
-  showCancelButton: true
-})
-
-if (text) {
-  Swal.fire(text)
-}
-*/
 async function readline(label, placeholder, showcancel) {
   const text = await Swal.fire({
     input: 'text',
@@ -46,40 +31,24 @@ async function confirm(label, yes, no) {
 }
 
 /*
-const { value: fruit } = await Swal.fire({
-  title: 'Select field validation',
-  input: 'select',
-  inputOptions: {
-    'Fruits': {
-      apples: 'Apples',
-      bananas: 'Bananas',
-      grapes: 'Grapes',
-      oranges: 'Oranges'
-    },
-    'Vegetables': {
-      potato: 'Potato',
-      broccoli: 'Broccoli',
-      carrot: 'Carrot'
-    },
-    'icecream': 'Ice cream'
-  },
-  inputPlaceholder: 'Select a fruit',
-  showCancelButton: true,
-  inputValidator: (value) => {
-    return new Promise((resolve) => {
-      if (value === 'oranges') {
-        resolve()
-      } else {
-        resolve('You need to select oranges :)')
-      }
-    })
-  }
-})
-
-if (fruit) {
-  Swal.fire(`You selected: ${fruit}`)
-}
+        let n = await dialog.readline('Please input name', 'file name', true);
+        if (n) {
+            m.new_notes(n.value);
+        }
 */
+
+async function readlines(label, placeholder, showcancel) {
+  const text = await Swal.fire({
+    input: 'textarea',
+    inputLabel: label,
+    inputPlaceholder: placeholder,
+    inputAttributes: {
+      'aria-label': placeholder
+    },
+    showCancelButton: showcancel
+  });
+  return text;
+}
 
 async function select(options) {
   let o = {};
@@ -98,6 +67,7 @@ async function select(options) {
 
 exports.alert = alert;
 exports.readline = readline;
+exports.readlines = readlines;
 exports.confirm = confirm;
 exports.select = select;
 

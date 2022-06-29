@@ -105,7 +105,7 @@ function _update_document(docs, name, content) {
 }
 
 function get_document_content(id) {
-  var diagram_documents = store.get_store().documents;
+  var diagram_documents = get_documents();
   if (diagram_documents[id]) {
     var ret = '';
     if (Object.keys(diagram_documents[id].json).length !== 0) {
@@ -117,12 +117,12 @@ function get_document_content(id) {
 }
 
 function build_doc() {
-  //generate b64 data
+  //generate string data
   var obj = {};
-  var documents = store.get_store().documents;
+  var documents = get_documents();
   for (const el in documents) {
     if (documents.hasOwnProperty(el)) {
-      obj[el] = get_document_content(el);
+      obj[el] = get_document_content(el);  //the string with node body markdown and frontmatter
     }
   }
   var obj_str = JSON.stringify(obj);
@@ -155,7 +155,7 @@ function update_document(name, content) {
 }
 
 function get_subnode_names(id) {
-  var diagram_documents = store.get_store().documents;
+  var diagram_documents = get_documents();
   if (diagram_documents[id]) {
     if (diagram_documents[id].json.nodes) {
       return diagram_documents[id].json.nodes;
@@ -166,7 +166,7 @@ function get_subnode_names(id) {
 
 
 function get_document_body(id) {
-  var diagram_documents = store.get_store().documents;
+  var diagram_documents = get_documents();
 
   if (diagram_documents[id]) {
     return diagram_documents[id].body;
@@ -199,7 +199,7 @@ function get_impacted_document() {
 }
 
 function get_document_obj(id, create) {
-  var documents = store.get_store().documents;
+  var documents = get_documents();
   if (!documents[id]) {
     //update_document(id, '');
     if (create) {
@@ -256,7 +256,7 @@ function get_attrs(id) {
 }
 
 function get_edges(doc) {
-  var documents = store.get_store().documents;
+  var documents = get_documents();
 
   if (documents[doc].json.edges) {
     return documents[doc].json.edges;
@@ -265,7 +265,7 @@ function get_edges(doc) {
 }
 
 function get_common_attr(name, key) {
-  var docs = store.get_store().documents;
+  var docs = get_documents();
   if (docs[name]) {
     return docs[name].json[key];
   }
@@ -274,7 +274,7 @@ function get_common_attr(name, key) {
 
 function get_outline(name) {
   name = name || get_active_document();
-  var docs = store.get_store().documents;
+  var docs = get_documents();
   if (docs[name]) {
     let r = docs[name].json['outline'] || {};
     return r;
@@ -283,7 +283,7 @@ function get_outline(name) {
 }
 
 function get_all_names() {
-  var docs = store.get_store().documents;
+  var docs = get_documents();
   var ret = new Set();
   for (let d in docs) {
     if (docs.hasOwnProperty(d)) {
@@ -314,6 +314,7 @@ function set_config(key, value) {
 }
 
 function rename_document(src, target) {
+  if (src === target) return;
   store.emit('DOCUMENT-RENAME', (s) => {
     s.documents[target] = s.documents[src];
     let keep = get_common_attr(config_file, 'keep');
@@ -342,10 +343,9 @@ function delete_document(name) {
 }
 
 function document_available(name) {
-  var docs = store.get_store().documents;
+  var docs = get_documents();
   return name in docs;
 }
-
 
 function allocation_name() {
   let current = new Date();
@@ -443,8 +443,6 @@ function get_notes_name() {
   return notes_name;
 }
 
-
-
 function duplicate_notes(src, target) {
   if (storage.get(src) !== null) {
     let v = storage.get(src);
@@ -466,6 +464,7 @@ function delete_notes(name) {
 }
 
 function rename_notes(src, target) {
+  if (src === target) return;
   duplicate_notes(src, target);
   delete_notes(src);
   store.emit('DOCUMENT-RENAME', {});
@@ -474,9 +473,7 @@ function rename_notes(src, target) {
 function get_all_notes_name() {
   let r = {};
   for (let k of storage.keys()) {
-    if (k.charAt(0) !== '_') {  //exclude pounch db files
-      r[k] = 'Notes';
-    }
+    r[k] = 'Notes';
   }
   return r;
 }
@@ -502,6 +499,38 @@ function get_all_notes() {
     d[n] = get_doc(n);
   }
   return d;
+}
+
+/*
+function build_doc() {
+  //generate string data
+  var obj = {};
+  var documents = get_documents();
+  for (const el in documents) {
+    if (documents.hasOwnProperty(el)) {
+      obj[el] = get_document_content(el);  //the string with node body markdown and frontmatter
+    }
+  }
+  var obj_str = JSON.stringify(obj);
+  return obj_str;
+}
+*/
+
+function append_document(name, text, notesname) {
+  if ((!notesname)  || notesname === notes_name) {
+    let t = get_document_content(name);
+    t += text;
+    update_document(name, t);
+  } else {
+    //it's not current active notes, update storage directly.
+    let docs = storage.get(notesname);
+    if (docs) {
+      docs = JSON.parse(docs);
+      docs[name] += text;
+      update_storage(notesname, JSON.stringify(docs));
+    }
+  }
+
 }
 
 function set_all_notes(data) {
@@ -558,6 +587,7 @@ exports.get_all_notes = get_all_notes;  //in a dict
 exports.set_all_notes = set_all_notes;  //in a dict
 
 exports.get_outline = get_outline;
+exports.append_document = append_document;
 
 /*
 notes_name1:
