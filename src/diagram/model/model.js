@@ -134,6 +134,11 @@ function get_doc(name) {
   return storage.get(name);
 }
 
+function get_doc_obj(name) {
+  let s = get_doc(name);
+  return JSON.parse(s);
+}
+
 function get_b64() {
   return base64.encode(get_doc());
 }
@@ -141,6 +146,9 @@ function get_b64() {
 function update_storage(name, data) {
   name = name || notes_name;
   data = data || build_doc();
+  if (data instanceof Object) {
+    data = JSON.stringify(data);
+  }
   storage.set(name, data);
   store.emit('STORAGE_UPDATE', {});
 }
@@ -501,6 +509,16 @@ function get_all_notes() {
   return d;
 }
 
+//get_doc_obj
+
+function get_all_notes_obj() {
+  let d = {};
+  for (let n of Object.keys(get_all_notes_name())) {
+    d[n] = get_doc_obj(n);
+  }
+  return d;
+}
+
 /*
 function build_doc() {
   //generate string data
@@ -540,6 +558,7 @@ function set_all_notes(data) {
   for (let n of Object.keys(data)) {
     update_storage(n, data[n]);
   }
+  notes_name = default_name;
   reset(notes_name);
 }
 
@@ -585,6 +604,7 @@ exports.get_notes_name = get_notes_name;
 exports.get_all_notes_name = get_all_notes_name;
 exports.get_all_notes = get_all_notes;  //in a dict
 exports.set_all_notes = set_all_notes;  //in a dict
+exports.get_all_notes_obj = get_all_notes_obj;
 
 exports.get_outline = get_outline;
 exports.append_document = append_document;

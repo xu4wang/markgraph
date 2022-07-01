@@ -97,10 +97,15 @@ function node(id, attrs, md) {
 //rol, col, width, height, padding,id,title,parent,img, border
 function add_only_node(id, attrs, md) {
   var default_attrs = {
-    top: 100,
-    left: 100,
-    width: 200,
-    height: 200,
+    width: '900',
+    height: '5000',
+    'text-align': 'left',
+    'padding-top': '50px',
+    'padding-left': '50px',
+    'padding-right': '50px',
+    left: '2px',
+    top: '2px',
+    'line-height': '1.4',
     id: id,
     parent: 'canvas'
   };

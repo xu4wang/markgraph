@@ -14,7 +14,7 @@ var dialog = require('./view/dialog');
 async function inbox_handler() {
   let n = await dialog.readlines('Send to inbox', 'things to remember', true);
   if (n) {
-    let text = '\n\n' + Date() + '\n' + n.value;
+    let text = '\n\n----\n' + Date() + '\n\n' + n.value;
     m.append_document('inbox', text, 'gtd');
   }
 }

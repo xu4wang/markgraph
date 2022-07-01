@@ -188,11 +188,11 @@ var cmen = [
     type: cmenu.ContextMenu.DIVIDER
   },
   {
-    text: 'Export Snapshot (in json format)',
+    text: 'Export Snapshot (in yaml format)',
     events: {
       click: function () {
-        let d = m.get_all_notes();
-        fe.export_json('markgraph', d);
+        let d = m.get_all_notes_obj();
+        fe.export_yaml('markgraph', d);
       }
     }
   },
@@ -200,7 +200,7 @@ var cmen = [
     text: 'Import a Snapshot file',
     events: {
       click: async function () {
-        let d = await fe.import_json();
+        let d = await fe.import_yaml();
         if (d) {
           if (await tm.write(d) !== '') {
             dialog.alert('A new snapshot was added to the time machine!');
@@ -240,6 +240,10 @@ var cmen = [
 menu = new cmenu.ContextMenu(cmen);
 
 eletb.addEventListener('contextmenu', function (e) {
+  menu.display(e);
+});
+
+eletb.addEventListener('dblclick', function (e) {
   menu.display(e);
 });
 
