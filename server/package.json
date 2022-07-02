@@ -1,0 +1,19 @@
+{
+  "name": "markserver",
+  "version": "1.0.0",
+  "description": "A simple server for markgraph to store data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "git",
+    "version",
+    "markgraph"
+  ],
+  "author": "xu4wang@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}

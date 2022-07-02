@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 'use strict';
 
 var jsyaml     = require('js-yaml');
@@ -106,14 +107,11 @@ function _update_document(docs, name, content) {
 
 function get_document_content(id) {
   var diagram_documents = get_documents();
-  if (diagram_documents[id]) {
-    var ret = '';
-    if (Object.keys(diagram_documents[id].json).length !== 0) {
-      ret = '---\n' + jsyaml.dump(diagram_documents[id].json) + '---';
-    }
-    return ret + diagram_documents[id].body;
+  var ret = '';
+  if (Object.keys(diagram_documents[id].json).length !== 0) {
+    ret = '---\n' + jsyaml.dump(diagram_documents[id].json) + '---\n';
   }
-  return '';
+  return ret + diagram_documents[id].body;
 }
 
 function build_doc() {
@@ -187,6 +185,12 @@ function set_active_document(name, notes) {
     // eslint-disable-next-line no-use-before-define
     _reset(notes);
   }
+
+  //shall we create the doc if not available?
+  if (!document_available(name)) {
+    update_document(name, '');
+  }
+
   store.emit('ACTIVE-DOCUMENT', () => ({ active : name }));
   //check if it's a notes package???
   /*
