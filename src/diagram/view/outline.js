@@ -16,7 +16,8 @@ let is_locked = false;
 function cb(e) {
   let id =  e.target.id;
   id = id.substring(0, id.length - '__OUTLINE__'.length);
-  m.set_active_document(id);
+  let name_notes = id.split('@');
+  m.set_active_document(name_notes[0], name_notes[1]);
 }
 
 
@@ -96,7 +97,10 @@ m.on('ACTIVE-DOCUMENT', () => {
 });
 
 m.on('OPEN-NOTES', () => {
-  clear_all_btn();
+  //we only do this if it's not locked
+  if (!is_locked) {
+    clear_all_btn();
+  }
 });
 
 exports.set_attr = set_attr;

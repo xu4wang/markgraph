@@ -109,7 +109,7 @@ function get_document_content(id) {
   var diagram_documents = get_documents();
   var ret = '';
   if (Object.keys(diagram_documents[id].json).length !== 0) {
-    ret = '---\n' + jsyaml.dump(diagram_documents[id].json) + '---\n';
+    ret = '---\n' + jsyaml.dump(diagram_documents[id].json) + '---';
   }
   return ret + diagram_documents[id].body;
 }
