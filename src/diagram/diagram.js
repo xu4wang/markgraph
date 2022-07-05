@@ -13,7 +13,7 @@ var dialog = require('./view/dialog');
 
 async function inbox_handler() {
   let n = await dialog.readlines('Send to inbox', 'things to remember', true);
-  if (n) {
+  if (n && n.value) {
     let text = '\n\n----\n' + Date() + '\n\n' + n.value;
     m.append_document('inbox', text, 'gtd');
   }
@@ -21,7 +21,7 @@ async function inbox_handler() {
 
 function set_inbox() {
   window.addEventListener('keydown', async function (event) {
-    if ((event.ctrlKey || event.metaKey) && event.code === 'KeyI') {
+    if ((event.ctrlKey || event.metaKey) && event.code === 'Digit0') {
       await inbox_handler();
     }
   });
